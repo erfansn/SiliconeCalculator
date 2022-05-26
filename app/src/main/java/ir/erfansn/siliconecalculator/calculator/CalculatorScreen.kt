@@ -7,11 +7,9 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -19,9 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -36,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavHostController
+import ir.erfansn.siliconecalculator.ui.LocalThemeToggle
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.SiliconeButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
@@ -45,8 +40,6 @@ import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
-    isDarkTheme: Boolean,
-    onThemeToggle: (Boolean) -> Unit,
     onButtonClick: (CalculatorButton) -> Unit,
 ) {
     ConstraintLayout(
@@ -59,18 +52,18 @@ fun CalculatorScreen(
             modifier = Modifier
                 .layoutId("theme_changer")
                 .aspectRatio(1.25f),
-            onClick = { onThemeToggle(!isDarkTheme) },
-            icon = if (isDarkTheme) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
+            onClick = LocalThemeToggle.current,
+            icon = if (MaterialTheme.colors.isLight) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
             contentDescription = "Theme changer"
         )
 
         val calculatorState = rememberCalculatorState()
         CalculationContent(
+            calculatorState = calculatorState,
             mathExpression = uiState.mathExpression,
             evaluationResult = uiState.evaluationResult,
-            calculatorState = calculatorState
         )
-        ButtonsLayoutContent(
+        NumberPadContent(
             calculatorState = calculatorState,
             onButtonClick = onButtonClick
         )
@@ -80,9 +73,9 @@ fun CalculatorScreen(
 @OptIn(ExperimentalTextApi::class)
 @Composable
 private fun CalculationContent(
+    calculatorState: CalculatorState,
     mathExpression: String,
     evaluationResult: String,
-    calculatorState: CalculatorState,
 ) {
     Column(
         modifier = Modifier
@@ -136,14 +129,14 @@ private fun CalculationContent(
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-private fun ButtonsLayoutContent(
+private fun NumberPadContent(
     calculatorState: CalculatorState,
     onButtonClick: (CalculatorButton) -> Unit,
 ) {
     BoxWithConstraints(
         modifier = Modifier
             .aspectRatio(calculatorState.buttonsLayoutAspectRation)
-            .layoutId("buttons_layout")
+            .layoutId("number_pad")
     ) {
         Grid(
             columns = BUTTON_LAYOUT_COLUMNS_COUNT,
@@ -152,15 +145,20 @@ private fun ButtonsLayoutContent(
             val buttonWidth = maxWidth / BUTTON_LAYOUT_COLUMNS_COUNT
             val spaceBetweenButtons = calculatorState.calculateButtonPadding(buttonWidth)
 
-            for ((columns, lightColor, button) in calculatorState.buttonsCharacteristic) {
+            for ((button, category, widthRatio) in calculatorState.buttonsCharacteristic) {
+                val lightColor = when (category) {
+                    ButtonCategory.OPERATOR -> MaterialTheme.colors.secondary
+                    ButtonCategory.OPERATION -> MaterialTheme.colors.primaryVariant
+                    ButtonCategory.DIGIT -> MaterialTheme.colors.primary
+                }
                 SiliconeButton(
                     modifier = Modifier
                         .span(
-                            columns = columns,
+                            columns = widthRatio,
                             rows = 1,
                         )
                         .padding(spaceBetweenButtons),
-                    startColor = lightColor,
+                    lightColor = lightColor,
                     onClick = {
                         if (button == CalculatorButton.Equals) {
                             // TODO: 12/7/2021 Start move animation
@@ -193,18 +191,20 @@ private fun ButtonsLayoutContent(
 val constraintSet = ConstraintSet {
     val themeChanger = createRefFor("theme_changer")
     val calculation = createRefFor("calculation")
-    val buttonsLayout = createRefFor("buttons_layout")
+    val numberPad = createRefFor("number_pad")
 
     val topGuideline40 = createGuidelineFromTop(0.4f)
     val topGuideline38 = createGuidelineFromTop(0.38f)
-    val topGuideline10 = createGuidelineFromTop(0.09f)
-    val topGuideline2 = createGuidelineFromTop(0.01f)
-    val bottomGuideline1 = createGuidelineFromBottom(0.03f)
+    val topGuideline9 = createGuidelineFromTop(0.09f)
+    val topGuideline1 = createGuidelineFromTop(0.01f)
+    val bottomGuideline3 = createGuidelineFromBottom(0.03f)
 
     constrain(themeChanger) {
-        top.linkTo(topGuideline2)
-        start.linkTo(buttonsLayout.start, margin = 10.dp)
-        bottom.linkTo(topGuideline10)
+        start.linkTo(numberPad.start, margin = 10.dp)
+        linkTo(
+            top = topGuideline1,
+            bottom = topGuideline9,
+        )
 
         height = Dimension.preferredWrapContent
     }
@@ -215,13 +215,15 @@ val constraintSet = ConstraintSet {
         width = Dimension.wrapContent
         height = Dimension.fillToConstraints
     }
-    constrain(buttonsLayout) {
+    constrain(numberPad) {
         linkTo(
             start = parent.start,
             end = parent.end,
         )
-        bottom.linkTo(bottomGuideline1)
-        top.linkTo(topGuideline40)
+        linkTo(
+            top = topGuideline40,
+            bottom = bottomGuideline3,
+        )
 
         height = Dimension.preferredWrapContent
         width = Dimension.preferredWrapContent
@@ -234,13 +236,12 @@ private const val BUTTON_LAYOUT_COLUMNS_COUNT = 4
 class CalculatorState(
     val mathExpressionScrollState: ScrollState,
     val evaluationResultScrollState: ScrollState,
-    private val colors: Colors,
 ) {
-    val buttonsRowList = buttonList.chunked(BUTTON_LAYOUT_COLUMNS_COUNT)
+    private val buttonsRowList = buttonList.chunked(BUTTON_LAYOUT_COLUMNS_COUNT)
 
     val buttonsCharacteristic
         get() = buttonList.map {
-            Triple(buttonWidthRatio(it), buttonLightColor(it), it)
+            Triple(it, buttonCategory(it), buttonWidthRatio(it))
         }
 
     val buttonsLayoutAspectRation = BUTTON_LAYOUT_COLUMNS_COUNT.toFloat() / buttonsRowList.size
@@ -249,26 +250,27 @@ class CalculatorState(
         return buttonWidth * 0.04f
     }
 
-    fun buttonWidthRatio(button: CalculatorButton): Int {
+    private fun buttonWidthRatio(button: CalculatorButton): Int {
         return if (button.sign == "0") 2 else 1
     }
 
-    fun buttonLightColor(button: CalculatorButton): Color {
+    private fun buttonCategory(button: CalculatorButton): ButtonCategory {
         return when (button) {
-            in buttonsRowList.map(List<CalculatorButton>::last) -> colors.secondary
-            in buttonsRowList.first() -> colors.primaryVariant
-            else -> colors.primary
+            in buttonsRowList.map(List<CalculatorButton>::last) -> ButtonCategory.OPERATOR
+            in buttonsRowList.first() -> ButtonCategory.OPERATION
+            else -> ButtonCategory.DIGIT
         }
     }
 }
 
+enum class ButtonCategory { DIGIT, OPERATOR, OPERATION }
+
 @Composable
 fun rememberCalculatorState(
-    colors: Colors = MaterialTheme.colors,
     mathExpressionScrollState: ScrollState = rememberScrollState(),
     evaluationResultScrollState: ScrollState = rememberScrollState(),
-) = remember(colors, mathExpressionScrollState, evaluationResultScrollState) {
-    CalculatorState(mathExpressionScrollState, evaluationResultScrollState, colors)
+) = remember(mathExpressionScrollState, evaluationResultScrollState) {
+    CalculatorState(mathExpressionScrollState, evaluationResultScrollState)
 }
 
 @ExperimentalMaterialApi
@@ -287,8 +289,6 @@ fun CalculatorScreenPreview() {
         Surface(color = MaterialTheme.colors.background) {
             CalculatorScreen(
                 uiState = CalculatorUiState("4,900 + 15,910", "20,810"),
-                isDarkTheme = false,
-                onThemeToggle = { },
                 onButtonClick = { },
             )
         }

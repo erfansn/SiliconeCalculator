@@ -24,11 +24,11 @@ import ir.erfansn.siliconecalculator.ui.theme.BlueGrey800
 @Composable
 fun SiliconeButton(
     modifier: Modifier = Modifier,
-    startColor: Color,
-    endColor: Color = startColor.copy(
-        red = (startColor.red + 0.125f).coerceAtMost(1.0f),
-        green = (startColor.green + 0.125f).coerceAtMost(1.0f),
-        blue = (startColor.blue + 0.125f).coerceAtMost(1.0f),
+    lightColor: Color,
+    darkColor: Color = lightColor.copy(
+        red = (lightColor.red + 0.125f).coerceAtMost(1.0f),
+        green = (lightColor.green + 0.125f).coerceAtMost(1.0f),
+        blue = (lightColor.blue + 0.125f).coerceAtMost(1.0f),
     ),
     cornerRadiusPercent: Int = 36,
     elevation: ButtonElevation = ButtonDefaults.elevation(
@@ -65,8 +65,8 @@ fun SiliconeButton(
                         .drawBehind {
                             drawRect(
                                 brush = Brush.linearGradient(
-                                    0.0f to startColor,
-                                    1.0f to endColor,
+                                    0.0f to lightColor,
+                                    1.0f to darkColor,
                                 ),
                             )
 
@@ -82,8 +82,8 @@ fun SiliconeButton(
                                             from = Offset.Zero,
                                             to = Offset(x = size.width, y = size.height),
                                             colors = listOf(
-                                                endColor,
-                                                startColor,
+                                                darkColor,
+                                                lightColor,
                                             )
                                         )
                                         maskFilter =
@@ -117,7 +117,7 @@ fun NeuButtonPreview() {
     MaterialTheme {
         SiliconeButton(
             modifier = Modifier.padding(10.dp),
-            startColor = BlueGrey800,
+            lightColor = MaterialTheme.colors.primary,
             onClick = { },
         ) {
             Text(text = "1")

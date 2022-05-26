@@ -79,7 +79,7 @@ fun Grid(
 ) {
     check(columns > 0) { "Columns must be greater than 0" }
     Layout(
-        content = { GridScope.content() },
+        content = { with(GridScope) { content() } },
         modifier = modifier,
     ) { measurables, constraints ->
         // calculate how many rows we need

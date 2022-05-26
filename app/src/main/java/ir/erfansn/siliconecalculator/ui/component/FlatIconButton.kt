@@ -3,6 +3,7 @@ package ir.erfansn.siliconecalculator.ui.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -17,8 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 @Composable
 fun FlatIconButton(
     modifier: Modifier = Modifier,
-    shape: Shape = MaterialTheme.shapes.medium
-        .copy(all = CornerSize(percent = 50))
+    shape: Shape = RoundedCornerShape(50)
         .copy(bottomStart = CornerSize(percent = 0)),
     icon: ImageVector,
     contentDescription: String,
