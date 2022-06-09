@@ -1,10 +1,24 @@
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
+
 package ir.erfansn.siliconecalculator.ui.component
 
+import android.graphics.Path
 import android.view.MotionEvent
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -14,10 +28,12 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 import kotlin.math.hypot
-import android.graphics.Path as NativePath
 
 @Composable
 fun <T> CircularReveal(
@@ -26,11 +42,10 @@ fun <T> CircularReveal(
     animationSpec: FiniteAnimationSpec<Float> = tween(),
     content: @Composable (T) -> Unit,
 ) {
-    val transition = updateTransition(targetState)
+    val transition = updateTransition(targetState, label = "Circular reveal")
     transition.CircularReveal(modifier, animationSpec, content = content)
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <T> Transition<T>.CircularReveal(
     modifier: Modifier = Modifier,
@@ -63,8 +78,12 @@ fun <T> Transition<T>.CircularReveal(
         contentMap.clear()
         currentlyVisible.forEach { stateForContent ->
             contentMap[stateForContent] = {
-                val progress by animateFloat(transitionSpec = { animationSpec }) {
-                    if (stateForContent != currentlyVisible.last() || it == stateForContent) 1f else 0f
+                val progress by animateFloat(
+                    label = "Progress",
+                    transitionSpec = { animationSpec }
+                ) {
+                    val targetedContent = stateForContent != currentlyVisible.last() || it == stateForContent
+                    if (targetedContent) 1f else 0f
                 }
                 Box(Modifier.circularReveal(progress = progress, offset = offset)) {
                     content(stateForContent)
@@ -72,14 +91,14 @@ fun <T> Transition<T>.CircularReveal(
             }
         }
     }
-
-    Box(modifier.pointerInteropFilter {
-        offset = when (it.action) {
-            MotionEvent.ACTION_DOWN -> Offset(it.x, it.y)
-            else -> null
+    Box(
+        modifier = modifier.pointerInteropFilter {
+            if (it.action == MotionEvent.ACTION_DOWN) {
+                if (!started) offset = Offset(it.x, it.y)
+            }
+            started
         }
-        false
-    }) {
+    ) {
         currentlyVisible.forEach {
             key(it) {
                 contentMap[it]?.invoke()
@@ -88,7 +107,13 @@ fun <T> Transition<T>.CircularReveal(
     }
 }
 
-fun Modifier.circularReveal(@FloatRange(from = 0.0, to = 1.0) progress: Float, offset: Offset? = null) = clip(CircularRevealShape(progress, offset))
+private val <T> Transition<T>.started get() =
+    currentState != targetState || isRunning
+
+fun Modifier.circularReveal(
+    @FloatRange(from = 0.0, to = 1.0) progress: Float,
+    offset: Offset? = null,
+) = clip(CircularRevealShape(progress, offset))
 
 class CircularRevealShape(
     @FloatRange(from = 0.0, to = 1.0) private val progress: Float,
@@ -99,12 +124,12 @@ class CircularRevealShape(
         layoutDirection: LayoutDirection,
         density: Density,
     ): Outline {
-        return Outline.Generic(NativePath().apply {
+        return Outline.Generic(Path().apply {
             addCircle(
                 offset?.x ?: (size.width / 2f),
                 offset?.y ?: (size.height / 2f),
                 longestDistanceToACorner(size, offset) * progress,
-                NativePath.Direction.CW
+                Path.Direction.CW
             )
         }.asComposePath())
     }
@@ -120,5 +145,36 @@ class CircularRevealShape(
         val bottomRight = hypot(size.width - offset.x, size.height - offset.y)
 
         return topLeft.coerceAtLeast(topRight).coerceAtLeast(bottomLeft).coerceAtLeast(bottomRight)
+    }
+}
+
+@Preview
+@Composable
+fun CircularRevealAnimationPreview() {
+    val isSystemDark = isSystemInDarkTheme()
+    var darkTheme by remember { mutableStateOf(isSystemDark) }
+    val onThemeToggle = { darkTheme = !darkTheme }
+
+    CircularReveal(
+        targetState = darkTheme,
+        animationSpec = tween(1500)
+    ) { isDark ->
+        SiliconeCalculatorTheme(darkTheme = isDark) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colors.background,
+                onClick = onThemeToggle
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.size(120.dp),
+                        imageVector = if (isDark) Icons.Default.DarkMode else Icons.Default.LightMode,
+                        contentDescription = "Toggle",
+                    )
+                }
+            }
+        }
     }
 }

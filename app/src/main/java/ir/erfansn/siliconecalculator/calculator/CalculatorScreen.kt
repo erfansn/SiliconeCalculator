@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -31,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import ir.erfansn.siliconecalculator.ui.LocalThemeToggle
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.SiliconeButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
@@ -41,33 +41,72 @@ import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 fun CalculatorScreen(
     uiState: CalculatorUiState,
     onButtonClick: (CalculatorButton) -> Unit,
+    onHistoryNav: () -> Unit,
+    onThemeToggle: () -> Unit,
 ) {
     ConstraintLayout(
         constraintSet = constraintSet,
         modifier = Modifier
             .fillMaxSize()
-            .systemGesturesPadding()
+            .safeGesturesPadding(),
+    ) {
+        CalculatorTopBar(
+            onThemeToggle = onThemeToggle,
+            onHistoryNav = onHistoryNav,
+        )
+        CalculatorContent(
+            onButtonClick = onButtonClick,
+            mathExpression = uiState.mathExpression,
+            evaluationResult = uiState.evaluationResult
+        )
+    }
+}
+
+@Composable
+fun CalculatorTopBar(
+    onThemeToggle: () -> Unit,
+    onHistoryNav: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.layoutId("top_bar"),
+        horizontalArrangement = Arrangement.spacedBy(10.dp,
+            alignment = Alignment.Start)
     ) {
         FlatIconButton(
             modifier = Modifier
-                .layoutId("theme_changer")
                 .aspectRatio(1.25f),
-            onClick = LocalThemeToggle.current,
+            onClick = onThemeToggle,
             icon = if (MaterialTheme.colors.isLight) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
             contentDescription = "Theme changer"
         )
 
-        val calculatorState = rememberCalculatorState()
-        CalculationContent(
-            calculatorState = calculatorState,
-            mathExpression = uiState.mathExpression,
-            evaluationResult = uiState.evaluationResult,
-        )
-        NumberPadContent(
-            calculatorState = calculatorState,
-            onButtonClick = onButtonClick
+        FlatIconButton(
+            modifier = Modifier
+                .aspectRatio(1.25f),
+            onClick = onHistoryNav,
+            icon = Icons.Outlined.History,
+            contentDescription = "History calculations"
         )
     }
+}
+
+@Composable
+fun CalculatorContent(
+    onButtonClick: (CalculatorButton) -> Unit,
+    mathExpression: String,
+    evaluationResult: String,
+) {
+    val calculatorState = rememberCalculatorState()
+
+    CalculationContent(
+        calculatorState = calculatorState,
+        mathExpression = mathExpression,
+        evaluationResult = evaluationResult,
+    )
+    NumberPad(
+        calculatorState = calculatorState,
+        onButtonClick = onButtonClick
+    )
 }
 
 @OptIn(ExperimentalTextApi::class)
@@ -129,7 +168,7 @@ private fun CalculationContent(
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-private fun NumberPadContent(
+private fun NumberPad(
     calculatorState: CalculatorState,
     onButtonClick: (CalculatorButton) -> Unit,
 ) {
@@ -189,24 +228,27 @@ private fun NumberPadContent(
 }
 
 val constraintSet = ConstraintSet {
-    val themeChanger = createRefFor("theme_changer")
+    val topBarRef = createRefFor("top_bar")
     val calculation = createRefFor("calculation")
     val numberPad = createRefFor("number_pad")
 
+    val topGuideline1 = createGuidelineFromTop(0.01f)
+    val topGuideline9 = createGuidelineFromTop(0.09f)
     val topGuideline40 = createGuidelineFromTop(0.4f)
     val topGuideline38 = createGuidelineFromTop(0.38f)
-    val topGuideline9 = createGuidelineFromTop(0.09f)
-    val topGuideline1 = createGuidelineFromTop(0.01f)
     val bottomGuideline3 = createGuidelineFromBottom(0.03f)
 
-    constrain(themeChanger) {
-        start.linkTo(numberPad.start, margin = 10.dp)
+    constrain(topBarRef) {
         linkTo(
             top = topGuideline1,
+            start = parent.start,
             bottom = topGuideline9,
+            end = parent.end,
+            startMargin = 20.dp
         )
 
-        height = Dimension.preferredWrapContent
+        width = Dimension.fillToConstraints
+        height = Dimension.fillToConstraints
     }
     constrain(calculation) {
         bottom.linkTo(topGuideline38)
@@ -217,12 +259,10 @@ val constraintSet = ConstraintSet {
     }
     constrain(numberPad) {
         linkTo(
-            start = parent.start,
-            end = parent.end,
-        )
-        linkTo(
             top = topGuideline40,
             bottom = bottomGuideline3,
+            start = parent.start,
+            end = parent.end,
         )
 
         height = Dimension.preferredWrapContent
@@ -290,6 +330,8 @@ fun CalculatorScreenPreview() {
             CalculatorScreen(
                 uiState = CalculatorUiState("4,900 + 15,910", "20,810"),
                 onButtonClick = { },
+                onHistoryNav = { },
+                onThemeToggle = { }
             )
         }
     }
