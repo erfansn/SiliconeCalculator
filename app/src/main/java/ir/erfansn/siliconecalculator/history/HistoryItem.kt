@@ -30,22 +30,19 @@ fun HistoryItem(
         modifier = modifier,
         horizontalAlignment = Alignment.End
     ) {
-        val expressionScrollState = rememberScrollState()
         Text(
             modifier = Modifier
                 .alpha(ContentAlpha.medium)
-                .horizontalScroll(expressionScrollState, reverseScrolling = true)
+                .horizontalScroll(rememberScrollState(), reverseScrolling = true)
                 .padding(horizontal = 16.dp),
             text = expression,
             style = textStyle.copy(
                 fontWeight = FontWeight.Light
             )
         )
-
-        val evaluationResultScrollState = rememberScrollState()
         Text(
             modifier = Modifier
-                .horizontalScroll(evaluationResultScrollState, reverseScrolling = true)
+                .horizontalScroll(rememberScrollState(), reverseScrolling = true)
                 .padding(horizontal = 16.dp),
             text = result,
             style = textStyle,

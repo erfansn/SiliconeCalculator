@@ -11,16 +11,17 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ir.erfansn.siliconecalculator.calculator.CalculatorScreen
-import ir.erfansn.siliconecalculator.calculator.CalculatorUiState
 import ir.erfansn.siliconecalculator.history.HistoryScreen
 import ir.erfansn.siliconecalculator.ui.component.CircularReveal
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 
-class MainActivity : ComponentActivity() {
+class CalculatorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,27 +46,35 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SiliconeCalculatorScreenActivity(
     onThemeToggle: () -> Unit,
+    navController: NavHostController = rememberNavController(),
+    sharedViewModel: AppSharedViewModel = viewModel()
 ) {
     Surface(color = MaterialTheme.colors.background) {
-        val navController = rememberNavController()
         NavHost(
             navController = navController,
             startDestination = "calculator",
         ) {
-            composable(
-                "calculator",
-            ) {
+            composable("calculator") {
+                val uiState by sharedViewModel.calculatorUiState.collectAsState()
+
                 CalculatorScreen(
-                    uiState = CalculatorUiState("4,900 + 15,910", "20,810"),
-                    onButtonClick = { },
-                    onHistoryNav = { navController.navigate("history") },
+                    uiState = uiState,
+                    onButtonClick = sharedViewModel::onNumberPadClick,
+                    onHistoryNav = {
+                        navController.navigate("history") { launchSingleTop = true }
+                    },
                     onThemeToggle = onThemeToggle
                 )
             }
             composable("history") {
                 HistoryScreen(
-                    onClearHistory = { },
-                    onBackPress = { navController.popBackStack() }
+                    onHistoryClear = { },
+                    onBackPress = { navController.popBackStack() },
+                    onRecordSelect = {
+                        sharedViewModel.updateCalculatorDisplay(it.expression, it.result)
+
+                        navController.navigate("calculator") { launchSingleTop = true }
+                    }
                 )
             }
         }

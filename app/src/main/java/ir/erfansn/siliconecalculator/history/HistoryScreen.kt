@@ -1,38 +1,38 @@
 package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ClearAll
-import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import ir.erfansn.siliconecalculator.data.source.local.db.HistoryEntity
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
-import java.util.*
 
 @Composable
 fun HistoryScreen(
     historyRecords: List<HistoryEntity> = historyItems,
     onBackPress: () -> Unit,
-    onClearHistory: () -> Unit,
+    onHistoryClear: () -> Unit,
+    onRecordSelect: (HistoryEntity) -> Unit = { }
 ) {
     ConstraintLayout(
         constraintSet = constraintSet,
@@ -42,19 +42,19 @@ fun HistoryScreen(
     ) {
         HistoryTopBar(
             onBackPress = onBackPress,
-            onClearHistory = onClearHistory
+            onHistoryClear = onHistoryClear
         )
         HistoryList(
-            recordsList = historyRecords
+            recordsList = historyRecords,
+            onRecordSelect = onRecordSelect
         )
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HistoryTopBar(
     onBackPress: () -> Unit,
-    onClearHistory: () -> Unit,
+    onHistoryClear: () -> Unit,
 ) {
     Row(
         modifier = Modifier.layoutId("top_bar"),
@@ -72,7 +72,7 @@ fun HistoryTopBar(
         FlatIconButton(
             modifier = Modifier
                 .aspectRatio(1.25f),
-            onClick = onClearHistory,
+            onClick = onHistoryClear,
             icon = Icons.Outlined.ClearAll,
             contentDescription = "Clear all records"
         )
@@ -81,37 +81,51 @@ fun HistoryTopBar(
 
 @Composable
 fun HistoryList(
-    recordsList: List<HistoryEntity>
+    recordsList: List<HistoryEntity>,
+    onRecordSelect: (HistoryEntity) -> Unit
 ) {
     val recordsListByDate = remember(recordsList) {
         recordsList.groupBy { it.date }
     }
 
-    LazyColumn(
-        state = rememberLazyListState(
-            initialFirstVisibleItemIndex = recordsListByDate.size + historyItems.size
-        ),
+    Box(
         modifier = Modifier.layoutId("history_list"),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentAlignment = Alignment.Center
     ) {
-        recordsListByDate.forEach { (date, list) ->
-            items(list, key = { it.id }) { item ->
-                HistoryItem(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    expression = item.expression,
-                    result = item.result,
-                )
-            }
-            item {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = date,
-                    style = MaterialTheme.typography.h6
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                if (date != "Today") {
-                    Divider()
+        if (recordsListByDate.isEmpty()) {
+            Text(text = "There is no record!")
+        } else {
+            LazyColumn(
+                state = rememberLazyListState(
+                    initialFirstVisibleItemIndex = recordsListByDate.size + recordsList.size
+                ),
+            ) {
+                recordsListByDate.forEach { (date, list) ->
+                    items(list, key = { it.id }) { item ->
+                        HistoryItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(onClick = {
+                                    onRecordSelect(item)
+                                })
+                                .padding(vertical = 8.dp),
+                            expression = item.expression,
+                            result = item.result,
+                        )
+                    }
+                    item {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = date,
+                            style = MaterialTheme.typography.h6
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        if (date != "Today") {
+                            Divider(
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -165,13 +179,6 @@ val historyItems = listOf(
     HistoryEntity(date = "Today", expression = "1 + 1", result = "2"),
 )
 
-data class HistoryEntity(
-    val id: String = UUID.randomUUID().toString(),
-    val date: String = "",
-    val expression: String = "",
-    val result: String = "0",
-)
-
 @Preview(
     name = "Light theme",
     showBackground = true,
@@ -186,8 +193,8 @@ fun HistoryScreenPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
             HistoryScreen(
-                onClearHistory = { },
-                onBackPress = { }
+                onBackPress = { },
+                onHistoryClear = { }
             )
         }
     }

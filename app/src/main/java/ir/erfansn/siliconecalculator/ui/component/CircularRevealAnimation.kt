@@ -47,7 +47,7 @@ fun <T> CircularReveal(
 }
 
 @Composable
-fun <T> Transition<T>.CircularReveal(
+private fun <T> Transition<T>.CircularReveal(
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
     content: @Composable (targetState: T) -> Unit,
@@ -110,12 +110,12 @@ fun <T> Transition<T>.CircularReveal(
 private val <T> Transition<T>.started get() =
     currentState != targetState || isRunning
 
-fun Modifier.circularReveal(
+private fun Modifier.circularReveal(
     @FloatRange(from = 0.0, to = 1.0) progress: Float,
     offset: Offset? = null,
 ) = clip(CircularRevealShape(progress, offset))
 
-class CircularRevealShape(
+private class CircularRevealShape(
     @FloatRange(from = 0.0, to = 1.0) private val progress: Float,
     private val offset: Offset? = null,
 ) : Shape {
@@ -144,7 +144,7 @@ class CircularRevealShape(
         val bottomLeft = hypot(offset.x, size.height - offset.y)
         val bottomRight = hypot(size.width - offset.x, size.height - offset.y)
 
-        return topLeft.coerceAtLeast(topRight).coerceAtLeast(bottomLeft).coerceAtLeast(bottomRight)
+        return maxOf(topLeft, topRight, bottomLeft, bottomRight)
     }
 }
 

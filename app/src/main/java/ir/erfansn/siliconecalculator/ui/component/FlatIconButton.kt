@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package ir.erfansn.siliconecalculator.ui.component
 
 import androidx.compose.foundation.layout.Box
@@ -14,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 
-@ExperimentalMaterialApi
 @Composable
 fun FlatIconButton(
     modifier: Modifier = Modifier,
@@ -30,7 +31,6 @@ fun FlatIconButton(
         onClick = onClick
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Icon(
