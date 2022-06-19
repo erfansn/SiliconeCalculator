@@ -12,7 +12,7 @@ sealed class CalculatorButton(
     val symbol: String,
     val applier: (String) -> String = { n -> "$n $symbol " },
 ) {
-    data class Digit(private val d: Int) : CalculatorButton("$d", { n -> "$n$d" })
+    data class Digit(val d: Int) : CalculatorButton("$d", { n -> "$n$d" })
     object Add : CalculatorButton("+")
     object Sub : CalculatorButton("-")
     object Div : CalculatorButton("÷")

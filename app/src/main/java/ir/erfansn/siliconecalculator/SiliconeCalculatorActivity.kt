@@ -60,20 +60,17 @@ fun SiliconeCalculatorScreenActivity(
                 CalculatorScreen(
                     uiState = uiState,
                     onButtonClick = sharedViewModel::onNumberPadClick,
-                    onHistoryNav = {
-                        navController.navigate("history") { launchSingleTop = true }
-                    },
+                    onHistoryNav = { navController.navigate("history") },
                     onThemeToggle = onThemeToggle
                 )
             }
             composable("history") {
                 HistoryScreen(
                     onHistoryClear = { },
-                    onBackPress = { navController.popBackStack() },
+                    onBackPress = navController::popBackStack,
                     onRecordSelect = {
                         sharedViewModel.updateCalculatorDisplay(it.expression, it.result)
-
-                        navController.navigate("calculator") { launchSingleTop = true }
+                        navController.popBackStack()
                     }
                 )
             }

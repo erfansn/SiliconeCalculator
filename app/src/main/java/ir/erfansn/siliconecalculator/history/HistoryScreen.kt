@@ -23,16 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import ir.erfansn.siliconecalculator.data.source.local.db.HistoryEntity
+import ir.erfansn.siliconecalculator.data.source.local.db.HistoryRecord
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 
 @Composable
 fun HistoryScreen(
-    historyRecords: List<HistoryEntity> = historyItems,
+    historyRecords: List<HistoryRecord> = fakeHistoryRecords,
     onBackPress: () -> Unit,
     onHistoryClear: () -> Unit,
-    onRecordSelect: (HistoryEntity) -> Unit = { }
+    onRecordSelect: (HistoryRecord) -> Unit = { }
 ) {
     ConstraintLayout(
         constraintSet = constraintSet,
@@ -81,8 +81,8 @@ fun HistoryTopBar(
 
 @Composable
 fun HistoryList(
-    recordsList: List<HistoryEntity>,
-    onRecordSelect: (HistoryEntity) -> Unit
+    recordsList: List<HistoryRecord>,
+    onRecordSelect: (HistoryRecord) -> Unit
 ) {
     val recordsListByDate = remember(recordsList) {
         recordsList.groupBy { it.date }
@@ -165,18 +165,18 @@ val constraintSet = ConstraintSet {
     }
 }
 
-val historyItems = listOf(
-    HistoryEntity(date = "12 April", expression = "1 + 788 * 875", result = "10"),
-    HistoryEntity(date = "12 April", expression = "68774 + 9888 * 4763 / 9847", result = "2675.09"),
-    HistoryEntity(date = "15 March", expression = "458867 / 76", result = "0.002"),
-    HistoryEntity(date = "15 April", expression = "9475 * 0.88888", result = "4755.2"),
-    HistoryEntity(date = "19 April", expression = "47362 / 1 / 98585", result = "12345"),
-    HistoryEntity(date = "19 April", expression = "5452 - 97584 + 9573 / 848 * 764", result = "14795"),
-    HistoryEntity(date = "19 April", expression = "12 - 957 + 857 - 9588 / 4388 * 8746", result = "25874333"),
-    HistoryEntity(date = "Yesterday", expression = "23857 - 979400 + 9488 / 8858", result = "234555"),
-    HistoryEntity(date = "Yesterday", expression = "1 * 2 * 3 * 6", result = "56776"),
-    HistoryEntity(date = "Yesterday", expression = "999 * 4678", result = "2"),
-    HistoryEntity(date = "Today", expression = "1 + 1", result = "2"),
+val fakeHistoryRecords = listOf(
+    HistoryRecord(date = "12 April", expression = "1 + 788 * 875", result = "10"),
+    HistoryRecord(date = "12 April", expression = "68774 + 9888 * 4763 / 9847", result = "2675.09"),
+    HistoryRecord(date = "15 March", expression = "458867 / 76", result = "0.002"),
+    HistoryRecord(date = "15 April", expression = "9475 * 0.88888", result = "4755.2"),
+    HistoryRecord(date = "19 April", expression = "47362 / 1 / 98585", result = "12345"),
+    HistoryRecord(date = "19 April", expression = "5452 - 97584 + 9573 / 848 * 764", result = "14795"),
+    HistoryRecord(date = "19 April", expression = "12 - 957 + 857 - 9588 / 4388 * 8746", result = "25874333"),
+    HistoryRecord(date = "Yesterday", expression = "23857 - 979400 + 9488 / 8858", result = "234555"),
+    HistoryRecord(date = "Yesterday", expression = "1 * 2 * 3 * 6", result = "56776"),
+    HistoryRecord(date = "Yesterday", expression = "999 * 4678", result = "2"),
+    HistoryRecord(date = "Today", expression = "1 + 1", result = "2"),
 )
 
 @Preview(

@@ -1,7 +1,7 @@
 package ir.erfansn.siliconecalculator.history
 
-import ir.erfansn.siliconecalculator.data.source.local.db.HistoryEntity
+import ir.erfansn.siliconecalculator.data.source.local.db.HistoryRecord
 
 data class HistoryUiState(
-    val recordsList: List<HistoryEntity>
+    val recordsList: List<HistoryRecord>
 )
