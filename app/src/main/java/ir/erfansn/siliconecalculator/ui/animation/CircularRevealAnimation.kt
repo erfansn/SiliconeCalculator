@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
-
-package ir.erfansn.siliconecalculator.ui.component
+package ir.erfansn.siliconecalculator.ui.animation
 
 import android.graphics.Path
 import android.view.MotionEvent
@@ -46,6 +44,7 @@ fun <T> CircularReveal(
     transition.CircularReveal(modifier, animationSpec, content = content)
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun <T> Transition<T>.CircularReveal(
     modifier: Modifier = Modifier,
@@ -148,6 +147,7 @@ private class CircularRevealShape(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun CircularRevealAnimationPreview() {

@@ -8,6 +8,15 @@ class EvaluatorTest {
     private var evaluator = Evaluator()
 
     @Test
+    fun `Returns '1,0' when expression '001' is evaluated`() {
+        val expression = "001"
+
+        val result = evaluator.eval(expression)
+
+        assertThat(result.toDouble()).isEqualTo(1.0)
+    }
+
+    @Test
     fun `Returns '-1,0' when expression '1 - 2' is evaluated`() {
         val expression = "1 - 2"
 

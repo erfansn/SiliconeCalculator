@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import ir.erfansn.siliconecalculator.data.source.local.db.HistoryRecord
+import ir.erfansn.siliconecalculator.data.model.Computation
+import ir.erfansn.siliconecalculator.data.model.HistoryRecord
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 
@@ -32,7 +33,7 @@ fun HistoryScreen(
     historyRecords: List<HistoryRecord> = fakeHistoryRecords,
     onBackPress: () -> Unit,
     onHistoryClear: () -> Unit,
-    onRecordSelect: (HistoryRecord) -> Unit = { }
+    onRecordSelect: (Computation) -> Unit = { }
 ) {
     ConstraintLayout(
         constraintSet = constraintSet,
@@ -82,14 +83,14 @@ fun HistoryTopBar(
 @Composable
 fun HistoryList(
     recordsList: List<HistoryRecord>,
-    onRecordSelect: (HistoryRecord) -> Unit
+    onRecordSelect: (Computation) -> Unit
 ) {
     val recordsListByDate = remember(recordsList) {
         recordsList.groupBy { it.date }
     }
 
     Box(
-        modifier = Modifier.layoutId("history_list"),
+        modifier = Modifier.layoutId("history_records"),
         contentAlignment = Alignment.Center
     ) {
         if (recordsListByDate.isEmpty()) {
@@ -105,15 +106,13 @@ fun HistoryList(
                         HistoryItem(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable(onClick = {
-                                    onRecordSelect(item)
-                                })
+                                .clickable(onClick = { onRecordSelect(item) })
                                 .padding(vertical = 8.dp),
                             expression = item.expression,
                             result = item.result,
                         )
                     }
-                    item {
+                    item(date) {
                         Text(
                             modifier = Modifier.padding(16.dp),
                             text = date,
@@ -134,7 +133,7 @@ fun HistoryList(
 
 val constraintSet = ConstraintSet {
     val topBarRef = createRefFor("top_bar")
-    val historyList = createRefFor("history_list")
+    val historyList = createRefFor("history_records")
 
     val topGuideline1 = createGuidelineFromTop(0.01f)
     val topGuideline9 = createGuidelineFromTop(0.09f)

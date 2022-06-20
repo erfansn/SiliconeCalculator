@@ -16,9 +16,10 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
 import ir.erfansn.siliconecalculator.calculator.CalculatorScreen
 import ir.erfansn.siliconecalculator.history.HistoryScreen
-import ir.erfansn.siliconecalculator.ui.component.CircularReveal
+import ir.erfansn.siliconecalculator.ui.animation.CircularReveal
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 
 class CalculatorActivity : ComponentActivity() {
@@ -31,12 +32,16 @@ class CalculatorActivity : ComponentActivity() {
             var darkTheme by remember { mutableStateOf(isSystemDark) }
             val onThemeToggle = { darkTheme = !darkTheme }
 
+            val navController = rememberNavController()
             CircularReveal(
                 targetState = darkTheme,
                 animationSpec = tween(500)
             ) { isDark ->
                 SiliconeCalculatorTheme(darkTheme = isDark) {
-                    SiliconeCalculatorScreenActivity(onThemeToggle = onThemeToggle)
+                    SiliconeCalculatorScreenActivity(
+                        navController = navController,
+                        onThemeToggle = onThemeToggle
+                    )
                 }
             }
         }
@@ -45,16 +50,16 @@ class CalculatorActivity : ComponentActivity() {
 
 @Composable
 fun SiliconeCalculatorScreenActivity(
+    navController: NavHostController,
     onThemeToggle: () -> Unit,
-    navController: NavHostController = rememberNavController(),
-    sharedViewModel: AppSharedViewModel = viewModel()
 ) {
     Surface(color = MaterialTheme.colors.background) {
         NavHost(
             navController = navController,
-            startDestination = "calculator",
+            startDestination = "calculator?expression={expression}&result={result}",
         ) {
-            composable("calculator") {
+            composable("calculator?expression={expression}&result={result}") {
+                val sharedViewModel = viewModel<CalculatorViewModel>()
                 val uiState by sharedViewModel.calculatorUiState.collectAsState()
 
                 CalculatorScreen(
@@ -69,8 +74,11 @@ fun SiliconeCalculatorScreenActivity(
                     onHistoryClear = { },
                     onBackPress = navController::popBackStack,
                     onRecordSelect = {
-                        sharedViewModel.updateCalculatorDisplay(it.expression, it.result)
-                        navController.popBackStack()
+                        navController.navigate(
+                            route = "calculator?expression=${it.expression}&result=${it.result}"
+                        ) {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -90,6 +98,9 @@ fun SiliconeCalculatorScreenActivity(
 @Composable
 fun DefaultPreview() {
     SiliconeCalculatorTheme {
-        SiliconeCalculatorScreenActivity(onThemeToggle = { })
+        SiliconeCalculatorScreenActivity(
+            navController = rememberNavController(),
+            onThemeToggle = { }
+        )
     }
 }
