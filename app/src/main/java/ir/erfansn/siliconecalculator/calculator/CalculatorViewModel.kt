@@ -68,8 +68,8 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             CalculatorButton.NumSign, CalculatorButton.Percent -> {
                 if (lastElementIsOperator) return
 
-                val appliedExpression = calculatorButton.applier(lastNumber)
-                val evaluatedResult = evaluator.eval(appliedExpression)
+                evaluator.expression = calculatorButton.applier(lastNumber)
+                val evaluatedResult = evaluator.eval()
 
                 replaceWithLastNumber(evaluatedResult)
             }
@@ -77,9 +77,9 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
                 if (currentExpression == lastNumber) return
 
                 _expression.update { currentExpression }
-                val appliedExpression = calculatorButton.applier(_expression.value)
+                evaluator.expression = calculatorButton.applier(_expression.value)
 
-                evaluator.eval(appliedExpression)
+                evaluator.eval()
             }
             else -> {
                 val expressionWithoutExtraOperator = currentExpression.let {
