@@ -137,7 +137,6 @@ private fun Display(
                 text = evaluationResult,
                 style = MaterialTheme.typography.h2.copy(
                     fontWeight = FontWeight.Normal,
-
                 ),
                 textAlign = TextAlign.Center,
             )
@@ -243,6 +242,7 @@ val constraintSet = ConstraintSet {
             bottom = bottomGuideline3,
             start = parent.start,
             end = parent.end,
+            verticalBias = 1f
         )
 
         height = Dimension.preferredWrapContent
