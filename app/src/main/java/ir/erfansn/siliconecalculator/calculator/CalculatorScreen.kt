@@ -107,7 +107,7 @@ private fun Display(
 ) {
     Column(
         modifier = Modifier
-            .layoutId("calculation")
+            .layoutId("display")
             .fillMaxWidth(),
         horizontalAlignment = Alignment.End
     ) {
@@ -171,17 +171,14 @@ private fun NumberPad(
             columns = BUTTON_LAYOUT_COLUMNS_COUNT,
             modifier = Modifier.fillMaxSize(),
         ) {
-            val buttonSizeWithoutSpacing = remember {
-                maxWidth / BUTTON_LAYOUT_COLUMNS_COUNT
-            }
-
+            val buttonSizeWithoutSpacing = maxWidth / BUTTON_LAYOUT_COLUMNS_COUNT
             val spaceBetweenButtons =
                 calculatorState.calculateButtonSpacing(buttonSizeWithoutSpacing)
 
             for ((button, category, widthRatio) in calculatorState.buttonsCharacteristic) {
                 val buttonColor = when (category) {
                     ButtonCategory.OPERATOR -> MaterialTheme.colors.secondary
-                    ButtonCategory.OTHER -> MaterialTheme.colors.primaryVariant
+                    ButtonCategory.FUNC -> MaterialTheme.colors.primaryVariant
                     ButtonCategory.DIGIT -> MaterialTheme.colors.primary
                 }
                 SiliconeButton(
@@ -213,13 +210,12 @@ private fun NumberPad(
 
 val constraintSet = ConstraintSet {
     val topBarRef = createRefFor("top_bar")
-    val calculation = createRefFor("calculation")
+    val display = createRefFor("display")
     val numberPad = createRefFor("number_pad")
 
     val topGuideline1 = createGuidelineFromTop(0.01f)
     val topGuideline9 = createGuidelineFromTop(0.09f)
     val topGuideline40 = createGuidelineFromTop(0.4f)
-    val topGuideline38 = createGuidelineFromTop(0.38f)
     val bottomGuideline3 = createGuidelineFromBottom(0.03f)
 
     constrain(topBarRef) {
@@ -234,8 +230,8 @@ val constraintSet = ConstraintSet {
         width = Dimension.fillToConstraints
         height = Dimension.fillToConstraints
     }
-    constrain(calculation) {
-        bottom.linkTo(topGuideline38)
+    constrain(display) {
+        bottom.linkTo(numberPad.top, margin = 16.dp)
         end.linkTo(parent.end)
 
         width = Dimension.wrapContent
@@ -278,13 +274,13 @@ object CalculatorState {
     private fun buttonCategory(button: CalculatorButton): ButtonCategory {
         return when (button) {
             in buttonsRowList.map(List<CalculatorButton>::last) -> ButtonCategory.OPERATOR
-            in buttonsRowList.first() -> ButtonCategory.OTHER
+            in buttonsRowList.first() -> ButtonCategory.FUNC
             else -> ButtonCategory.DIGIT
         }
     }
 }
 
-enum class ButtonCategory { DIGIT, OPERATOR, OTHER }
+enum class ButtonCategory { DIGIT, OPERATOR, FUNC }
 
 @Composable
 fun rememberCalculatorState() = remember { CalculatorState }

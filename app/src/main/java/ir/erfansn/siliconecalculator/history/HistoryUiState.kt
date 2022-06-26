@@ -1,7 +1,9 @@
 package ir.erfansn.siliconecalculator.history
 
-import ir.erfansn.siliconecalculator.data.model.HistoryRecord
+import androidx.compose.runtime.Immutable
+import ir.erfansn.siliconecalculator.data.model.HistoryItem
 
+@Immutable
 data class HistoryUiState(
-    val recordsList: List<HistoryRecord>
+    val historyItems: List<HistoryItem> = emptyList()
 )

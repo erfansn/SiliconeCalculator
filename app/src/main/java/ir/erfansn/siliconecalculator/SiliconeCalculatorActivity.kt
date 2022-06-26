@@ -59,12 +59,12 @@ fun SiliconeCalculatorScreenActivity(
             startDestination = "calculator?expression={expression}&result={result}",
         ) {
             composable("calculator?expression={expression}&result={result}") {
-                val sharedViewModel = viewModel<CalculatorViewModel>()
-                val uiState by sharedViewModel.calculatorUiState.collectAsState()
+                val calculatorViewModel = viewModel<CalculatorViewModel>()
+                val uiState by calculatorViewModel.calculatorUiState.collectAsState()
 
                 CalculatorScreen(
                     uiState = uiState,
-                    onButtonClick = sharedViewModel::onNumberPadClick,
+                    onButtonClick = calculatorViewModel::onNumberPadClick,
                     onHistoryNav = { navController.navigate("history") },
                     onThemeToggle = onThemeToggle
                 )
@@ -73,7 +73,7 @@ fun SiliconeCalculatorScreenActivity(
                 HistoryScreen(
                     onHistoryClear = { },
                     onBackPress = navController::popBackStack,
-                    onRecordSelect = {
+                    onComputationSelect = {
                         navController.navigate(
                             route = "calculator?expression=${it.expression}&result=${it.result}"
                         ) {
