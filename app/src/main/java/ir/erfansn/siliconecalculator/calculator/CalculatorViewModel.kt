@@ -4,11 +4,17 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ir.erfansn.siliconecalculator.data.model.Computation
+import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
+import ir.erfansn.siliconecalculator.data.repository.HistoryRepositoryImpl
 import ir.erfansn.siliconecalculator.utils.Evaluator
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.*
 
-class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
+class CalculatorViewModel(
+    savedStateHandle: SavedStateHandle,
+    private val historyRepository: HistoryRepository,
+) : ViewModel() {
 
     private val evaluator = Evaluator()
 
@@ -87,6 +93,8 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             }
         }
         _computation.update { it.copy(result = result) }
+
+        if (calculatorButton.evaluationWasSuccess) saveComputationInHistory()
     }
 
     private val CalculatorButton.isResultNotValidAllowOnlyAllClearButton
@@ -126,5 +134,14 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
             replacement = replacement,
             missingDelimiterValue = replacement
         )
+    }
+
+    private val CalculatorButton.evaluationWasSuccess
+        get() = this == CalculatorButton.Equals && resultIsValid
+
+    private fun saveComputationInHistory() {
+        viewModelScope.launch {
+            historyRepository.saveComputation(computation = _computation.value)
+        }
     }
 }

@@ -9,15 +9,16 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.*
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
 import ir.erfansn.siliconecalculator.calculator.CalculatorScreen
+import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
 import ir.erfansn.siliconecalculator.history.HistoryScreen
 import ir.erfansn.siliconecalculator.ui.animation.CircularReveal
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
@@ -59,7 +60,9 @@ fun SiliconeCalculatorScreenActivity(
             startDestination = "calculator?expression={expression}&result={result}",
         ) {
             composable("calculator?expression={expression}&result={result}") {
-                val calculatorViewModel = viewModel<CalculatorViewModel>()
+                val calculatorViewModel = viewModel<CalculatorViewModel>(
+                    factory = ViewModelFactory(LocalContext.current, it, it.arguments)
+                )
                 val uiState by calculatorViewModel.uiState.collectAsState()
 
                 CalculatorScreen(

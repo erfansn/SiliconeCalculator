@@ -3,6 +3,10 @@ package ir.erfansn.siliconecalculator.calculator
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coJustRun
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit4.MockKRule
+import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.rule.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -14,14 +18,18 @@ import org.junit.Test
 class CalculatorViewModelTest {
 
     @get:Rule
+    val mockkRule = MockKRule(this)
+
+    @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    @MockK lateinit var historyRepository: HistoryRepository
     private lateinit var viewModel: CalculatorViewModel
 
     @Before
     fun setUp() {
         val savedStateHandle = SavedStateHandle()
-        viewModel = CalculatorViewModel(savedStateHandle)
+        viewModel = CalculatorViewModel(savedStateHandle, historyRepository)
     }
 
     @Test
@@ -190,6 +198,8 @@ class CalculatorViewModelTest {
 
     @Test
     fun `Evaluates the entered expression correctly`() = runTest {
+        coJustRun { historyRepository.saveComputation(any()) }
+
         viewModel.uiState.test {
             viewModel.onNumPadButtonClick(CalculatorButton.Digit(7))
             viewModel.onNumPadButtonClick(CalculatorButton.Div)
@@ -221,6 +231,8 @@ class CalculatorViewModelTest {
 
     @Test
     fun `Evaluates the entered expression into 'NaN'`() = runTest {
+        coJustRun { historyRepository.saveComputation(any()) }
+
         viewModel.uiState.test {
             viewModel.onNumPadButtonClick(CalculatorButton.Digit(7))
             viewModel.onNumPadButtonClick(CalculatorButton.Div)
@@ -248,6 +260,8 @@ class CalculatorViewModelTest {
     @Test
     fun `Stops all buttons action when the expression evaluated is 'NaN' except AllClear button`() =
         runTest {
+            coJustRun { historyRepository.saveComputation(any()) }
+
             viewModel.uiState.test {
                 viewModel.onNumPadButtonClick(CalculatorButton.Div)
                 viewModel.onNumPadButtonClick(CalculatorButton.Decimal)

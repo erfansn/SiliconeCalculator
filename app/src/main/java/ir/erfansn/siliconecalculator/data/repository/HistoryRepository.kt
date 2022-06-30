@@ -1,25 +1,11 @@
 package ir.erfansn.siliconecalculator.data.repository
 
 import ir.erfansn.siliconecalculator.data.model.Computation
-import ir.erfansn.siliconecalculator.data.model.asHistoryEntity
-import ir.erfansn.siliconecalculator.data.source.local.HistoryLocalDataSource
-import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
-import ir.erfansn.siliconecalculator.data.source.local.db.model.asHistoryItem
-import kotlinx.coroutines.flow.map
+import ir.erfansn.siliconecalculator.data.model.HistoryItem
+import kotlinx.coroutines.flow.Flow
 
-class HistoryRepository(private val historyLocalDataSource: HistoryLocalDataSource) {
-
-    val historyItemsStream = historyLocalDataSource
-        .historyEntitiesStream
-        .map {
-            it.map(HistoryEntity::asHistoryItem)
-        }
-
-    suspend fun clearAllHistory() {
-        historyLocalDataSource.clearHistoryEntities()
-    }
-
-    suspend fun saveComputation(computation: Computation) {
-        historyLocalDataSource.insertHistoryEntity(computation.asHistoryEntity())
-    }
+interface HistoryRepository {
+    val historyItemsStream: Flow<List<HistoryItem>>
+    suspend fun clearAllHistory()
+    suspend fun saveComputation(computation: Computation)
 }
