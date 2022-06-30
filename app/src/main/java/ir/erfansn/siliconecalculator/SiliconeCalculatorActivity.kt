@@ -60,11 +60,11 @@ fun SiliconeCalculatorScreenActivity(
         ) {
             composable("calculator?expression={expression}&result={result}") {
                 val calculatorViewModel = viewModel<CalculatorViewModel>()
-                val uiState by calculatorViewModel.calculatorUiState.collectAsState()
+                val uiState by calculatorViewModel.uiState.collectAsState()
 
                 CalculatorScreen(
                     uiState = uiState,
-                    onButtonClick = calculatorViewModel::onNumberPadClick,
+                    onNumPadButtonClick = calculatorViewModel::onNumPadButtonClick,
                     onHistoryNav = { navController.navigate("history") },
                     onThemeToggle = onThemeToggle
                 )

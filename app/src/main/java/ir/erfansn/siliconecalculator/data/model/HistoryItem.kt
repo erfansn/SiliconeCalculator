@@ -1,5 +1,7 @@
 package ir.erfansn.siliconecalculator.data.model
 
+import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
+
 data class HistoryItem(
     val id: Int,
     val date: String,
@@ -9,6 +11,11 @@ data class HistoryItem(
 data class Computation(
     val expression: String = "",
     val result: String = "0",
+)
+
+fun Computation.asHistoryEntity() = HistoryEntity(
+    expression = expression,
+    result = result
 )
 
 val previewHistoryItems = listOf(

@@ -3,6 +3,7 @@ package ir.erfansn.siliconecalculator.calculator
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.utils.Evaluator
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -11,90 +12,98 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private val evaluator = Evaluator()
 
-    private var _expression = MutableStateFlow("")
-    private var _result = MutableStateFlow("0")
-    private val currentExpression: String get() = _result.value
+    private var _computation = MutableStateFlow(Computation())
+    private val currentExpression: String get() = _computation.value.result
 
     private var operatorsStack = Stack<String>().apply { push("$") }
     private val lastOperator get() = operatorsStack.peek()
-    private val lastNumber get() = currentExpression.substringAfterLast(" $lastOperator ")
-    private val lastElementIsOperator get() = lastNumber.isEmpty() && lastOperator.isNotEmpty()
+    private val String.lastNumber get() = substringAfterLast(" $lastOperator ")
+    private val String.lastElementIsOperator get() = lastNumber.isEmpty() && lastOperator.isNotEmpty()
 
-    val calculatorUiState = combine(
-        _expression,
-        _result,
-        ::CalculatorUiState
-    ).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = CalculatorUiState()
-    )
+    val uiState = _computation
+        .map(::CalculatorUiState)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = CalculatorUiState()
+        )
 
     init {
         updateCalculatorDisplay(
-            expression = savedStateHandle.get<String>("expression"),
-            result = savedStateHandle.get<String>("result")
+            expression = savedStateHandle["expression"],
+            result = savedStateHandle["result"]
         )
     }
 
     private fun updateCalculatorDisplay(expression: String?, result: String?) {
         if (expression == null || result == null) return
 
-        _expression.update { expression }
-        _result.update { result }
+        _computation.update {
+            it.copy(expression = expression, result = result)
+        }
     }
 
-    fun onNumberPadClick(calculatorButton: CalculatorButton) {
+    fun onNumPadButtonClick(calculatorButton: CalculatorButton) {
         if (calculatorButton.isResultNotValidAllowOnlyAllClearButton) return
 
         val result = when (calculatorButton) {
             is CalculatorButton.Digit -> {
-                val expressionWithoutExtraZero = currentExpression.let {
-                    if (lastNumber.isZero) it.removeLastNumber() else it
-                }
+                val expressionWithoutExtraZero = currentExpression.amendExpression(calculatorButton)
 
                 calculatorButton.applier(expressionWithoutExtraZero)
             }
             CalculatorButton.Decimal -> {
-                if (calculatorButton.symbol in lastNumber) return
+                if (calculatorButton.symbol in currentExpression.lastNumber) return
 
                 calculatorButton.applier(currentExpression)
             }
             CalculatorButton.AllClear -> {
-                _expression.update { "" }
+                _computation.update { it.copy(expression = "") }
 
                 calculatorButton.applier(currentExpression)
             }
             CalculatorButton.NumSign, CalculatorButton.Percent -> {
-                if (lastElementIsOperator) return
+                if (currentExpression.lastElementIsOperator) return
 
-                evaluator.expression = calculatorButton.applier(lastNumber)
-                val evaluatedResult = evaluator.eval()
+                evaluator.expression = calculatorButton.applier(currentExpression.lastNumber)
 
-                replaceWithLastNumber(evaluatedResult)
+                currentExpression.replaceLastNumberWith(evaluator.eval())
             }
             CalculatorButton.Equals -> {
-                if (currentExpression == lastNumber) return
+                if (isExpressionIncomplete) return
 
-                _expression.update { currentExpression }
-                evaluator.expression = calculatorButton.applier(_expression.value)
+                _computation.update { it.copy(expression = currentExpression.amendExpression(calculatorButton)) }
+                evaluator.expression = calculatorButton.applier(_computation.value.expression)
+
+                operatorsStack.removeAll { it != "$" }
 
                 evaluator.eval()
             }
             else -> {
-                val expressionWithoutExtraOperator = currentExpression.let {
-                    if (lastElementIsOperator) it.removeLastOperatorAndGet() else it
-                }
+                val expressionWithoutExtraOperator = currentExpression.amendExpression(calculatorButton)
                 operatorsStack.push(calculatorButton.symbol)
 
                 calculatorButton.applier(expressionWithoutExtraOperator)
             }
         }
-        _result.update { result }
+        _computation.update { it.copy(result = result) }
     }
 
     private val CalculatorButton.isResultNotValidAllowOnlyAllClearButton
-        get() = _result.value == "NaN" && this !is CalculatorButton.AllClear
+        get() = !resultIsValid && this != CalculatorButton.AllClear
+
+    private val resultIsValid get() = _computation.value.result != "NaN"
+
+    private fun String.amendExpression(calculatorButton: CalculatorButton): String = when {
+        lastNumber.isZero && calculatorButton is CalculatorButton.Digit -> removeLastNumber()
+        lastElementIsOperator && calculatorButton in listOf(
+            CalculatorButton.Add,
+            CalculatorButton.Sub,
+            CalculatorButton.Mul,
+            CalculatorButton.Div
+        ) -> removeLastOperatorAndGet()
+        else -> this
+    }
 
     private val String.isZero: Boolean
         get() = this == "0"
@@ -102,14 +111,20 @@ class CalculatorViewModel(savedStateHandle: SavedStateHandle) : ViewModel() {
     private fun String.removeLastNumber() =
         substringBeforeLast(lastNumber)
 
-    private fun replaceWithLastNumber(replacement: String): String {
-        return currentExpression.replaceAfterLast(
+    private fun String.removeLastOperatorAndGet() =
+        substringBeforeLast(" $lastOperator ").also { operatorsStack.pop() }
+
+    private val isExpressionIncomplete: Boolean
+        get() = currentExpression.isOnlyNumber ||
+                currentExpression.lastElementIsOperator && operatorsStack.size == 2
+
+    private val String.isOnlyNumber get() = this == lastNumber
+
+    private fun String.replaceLastNumberWith(replacement: String): String {
+        return replaceAfterLast(
             delimiter = " $lastOperator ",
             replacement = replacement,
             missingDelimiterValue = replacement
         )
     }
-
-    private fun String.removeLastOperatorAndGet() =
-        substringBeforeLast(" $lastOperator ").also { operatorsStack.pop() }
 }

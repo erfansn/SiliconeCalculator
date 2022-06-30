@@ -19,8 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -28,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.SiliconeButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
@@ -36,7 +40,7 @@ import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
-    onButtonClick: (CalculatorButton) -> Unit,
+    onNumPadButtonClick: (CalculatorButton) -> Unit,
     onHistoryNav: () -> Unit,
     onThemeToggle: () -> Unit,
 ) {
@@ -51,9 +55,9 @@ fun CalculatorScreen(
             onHistoryNav = onHistoryNav,
         )
         CalculatorContent(
-            onButtonClick = onButtonClick,
-            mathExpression = uiState.mathExpression,
-            evaluationResult = uiState.evaluationResult
+            onNumPadButtonClick = onNumPadButtonClick,
+            mathExpression = uiState.computation.expression,
+            evaluationResult = uiState.computation.result
         )
     }
 }
@@ -87,7 +91,7 @@ fun CalculatorTopBar(
 
 @Composable
 fun CalculatorContent(
-    onButtonClick: (CalculatorButton) -> Unit,
+    onNumPadButtonClick: (CalculatorButton) -> Unit,
     mathExpression: String,
     evaluationResult: String,
 ) {
@@ -96,10 +100,11 @@ fun CalculatorContent(
         evaluationResult = evaluationResult,
     )
     NumberPad(
-        onButtonClick = onButtonClick
+        onButtonClick = onNumPadButtonClick
     )
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun Display(
     mathExpression: String,
@@ -137,8 +142,12 @@ private fun Display(
                 text = evaluationResult,
                 style = MaterialTheme.typography.h2.copy(
                     fontWeight = FontWeight.Normal,
+                    platformStyle = PlatformTextStyle(false),
+                    lineHeightStyle = LineHeightStyle(
+                        alignment = LineHeightStyle.Alignment.Center,
+                        trim = LineHeightStyle.Trim.None
+                    )
                 ),
-                textAlign = TextAlign.Center,
             )
         }
         val resultBeShown = mathExpression.isNotEmpty() && evaluationResult.toDoubleOrNull() != null
@@ -300,8 +309,13 @@ fun CalculatorScreenPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
             CalculatorScreen(
-                uiState = CalculatorUiState("4,900 + 15,910", "20,810"),
-                onButtonClick = { },
+                uiState = CalculatorUiState(
+                    Computation(
+                        expression = "4,900 + 15,910",
+                        result = "20,810"
+                    )
+                ),
+                onNumPadButtonClick = { },
                 onHistoryNav = { },
                 onThemeToggle = { }
             )
