@@ -5,10 +5,10 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ir.erfansn.siliconecalculator.data.source.local.db.dao.HistoryDao
 import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
-import ir.erfansn.siliconecalculator.utils.DateConverter
+import ir.erfansn.siliconecalculator.utils.InstantConverter
 
 @Database(entities = [HistoryEntity::class], version = 1)
-@TypeConverters(DateConverter::class)
+@TypeConverters(InstantConverter::class)
 abstract class SiliconeCalculatorDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
 }
