@@ -6,12 +6,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HistoryDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertHistoryEntity(historyEntity: HistoryEntity)
 
     @Query("SELECT * FROM History")
     fun getHistoryEntitiesStream(): Flow<List<HistoryEntity>>
 
     @Query("DELETE FROM History")
-    suspend fun clearHistoryEntities()
+    suspend fun deleteAllHistoryEntities()
 }
