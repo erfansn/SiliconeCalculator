@@ -18,6 +18,10 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        ksp {
+            arg "room.schemaLocation", "$projectDir/schemas"
+        }
     }
 
     buildTypes {
@@ -27,6 +31,7 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -37,7 +42,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion compose_compiler_version
     }
     packagingOptions {
         resources {
@@ -47,6 +52,8 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.6'
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
@@ -66,6 +73,7 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.8-beta"
     implementation 'org.mariuszgromada.math:MathParser.org-mXparser:5.0.6'
+    implementation 'org.jetbrains.kotlinx:kotlinx-datetime:0.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "com.google.truth:truth:1.1.3"
