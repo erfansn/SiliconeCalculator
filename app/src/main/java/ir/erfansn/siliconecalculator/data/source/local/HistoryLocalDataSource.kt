@@ -2,16 +2,25 @@ package ir.erfansn.siliconecalculator.data.source.local
 
 import ir.erfansn.siliconecalculator.data.source.local.db.dao.HistoryDao
 import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
-class HistoryLocalDataSource(private val historyDao: HistoryDao) {
+class HistoryLocalDataSource(
+    private val historyDao: HistoryDao,
+    private val ioDispatcher: CoroutineDispatcher
+) {
 
     val historyEntitiesStream = historyDao.getHistoryEntitiesStream()
 
     suspend fun clearHistoryEntities() {
-        historyDao.clearHistoryEntities()
+        withContext(ioDispatcher) {
+            historyDao.deleteAllHistoryEntities()
+        }
     }
 
     suspend fun insertHistoryEntity(historyEntity: HistoryEntity) {
-        historyDao.insertHistoryEntity(historyEntity)
+        withContext(ioDispatcher) {
+            historyDao.insertHistoryEntity(historyEntity)
+        }
     }
 }
