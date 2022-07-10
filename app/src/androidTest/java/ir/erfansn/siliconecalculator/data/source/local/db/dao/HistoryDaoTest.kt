@@ -39,7 +39,7 @@ class HistoryDaoTest {
     }
 
     @Test
-    fun insertsNewHistoryEntity() = runTest {
+    fun oneEntity_whenInserts_retrievesCorrectly() = runTest {
         val historyEntity = HistoryEntity(
             id = 1,
             expression = "1 + 0",
@@ -52,7 +52,7 @@ class HistoryDaoTest {
     }
 
     @Test
-    fun insertsNewHistoryEntities_autoGenerateId_deletesAll() = runTest {
+    fun autoGenerateIdEntities_whenInsertsAndDeletes_worksCorrectly() = runTest {
         val historyEntities = testHistoryEntities
 
         historyEntities.forEach { historyDao.insertHistoryEntity(it) }
