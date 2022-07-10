@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -123,7 +125,8 @@ private fun Display(
                     reverseScrolling = true
                 )
                 .padding(horizontal = 20.dp)
-                .alpha(ContentAlpha.medium),
+                .alpha(ContentAlpha.medium)
+                .semantics { contentDescription = "Mathematical expression" },
             text = mathExpression,
             style = MaterialTheme.typography.h4.copy(
                 fontWeight = FontWeight.Light,
@@ -138,7 +141,8 @@ private fun Display(
                         state = rememberScrollState(),
                         reverseScrolling = true
                     )
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .semantics { contentDescription = "Evaluation result" },
                 text = evaluationResult,
                 style = MaterialTheme.typography.h2.copy(
                     fontWeight = FontWeight.Normal,
@@ -150,14 +154,18 @@ private fun Display(
                 ),
             )
         }
-        val resultBeShown = mathExpression.isNotEmpty() && evaluationResult.toDoubleOrNull() != null
-        if (resultBeShown) {
+        val resultIsSelectable =
+            mathExpression.isNotEmpty() && evaluationResult.toDoubleOrNull() != null
+        if (resultIsSelectable) {
             val customTextSelectionColors = TextSelectionColors(
                 handleColor = MaterialTheme.colors.secondary,
                 backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.4f)
             )
             CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
-                SelectionContainer(content = resultText)
+                SelectionContainer(
+                    modifier = Modifier.semantics { contentDescription = "Selectable result" },
+                    content = resultText
+                )
             }
         } else {
             resultText()
