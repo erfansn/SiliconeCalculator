@@ -3,6 +3,8 @@ package ir.erfansn.siliconecalculator.calculator
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
@@ -22,7 +24,8 @@ class CalculatorViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    @MockK(relaxed = true) lateinit var historyRepository: HistoryRepository
+    @MockK(relaxed = true)
+    lateinit var historyRepository: HistoryRepository
     private lateinit var viewModel: CalculatorViewModel
 
     @Before
@@ -196,57 +199,14 @@ class CalculatorViewModelTest {
         }
 
     @Test
-    fun `Evaluates the entered expression correctly`() = runTest {
+    fun `No evaluates the entered expression when it was incomplete`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(7))
+            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
             viewModel.onNumPadButtonClick(CalculatorButton.Div)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(4))
-            viewModel.onNumPadButtonClick(CalculatorButton.NumSign)
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.Sub)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(5))
-            viewModel.onNumPadButtonClick(CalculatorButton.Mul)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Add)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(5))
             viewModel.onNumPadButtonClick(CalculatorButton.Equals)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("7 ÷ -4.0E-8 - 5 × 1000 + 15")
-            assertThat(uiState.computation.result).isEqualTo("-1.75004985E8")
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `Evaluates the entered expression into 'NaN'`() = runTest {
-        viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(7))
-            viewModel.onNumPadButtonClick(CalculatorButton.Div)
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-            viewModel.onNumPadButtonClick(CalculatorButton.Sub)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(5))
-            viewModel.onNumPadButtonClick(CalculatorButton.Mul)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Add)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(5))
-            viewModel.onNumPadButtonClick(CalculatorButton.Equals)
-
-            val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("7 ÷ . - 5 × 1000 + 15")
-            assertThat(uiState.computation.result).isEqualTo("NaN")
+            assertThat(uiState.computation.result).isEqualTo("1 ÷ ")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -259,7 +219,8 @@ class CalculatorViewModelTest {
                 viewModel.onNumPadButtonClick(CalculatorButton.Div)
                 viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
                 viewModel.onNumPadButtonClick(CalculatorButton.Equals)
-                buttonList.filter { it != CalculatorButton.AllClear }.forEach(viewModel::onNumPadButtonClick)
+                buttonList.filter { it != CalculatorButton.AllClear }
+                    .forEach(viewModel::onNumPadButtonClick)
 
                 var uiState = expectMostRecentItem()
                 assertThat(uiState.computation.expression).isEqualTo("0 ÷ .")
@@ -274,4 +235,33 @@ class CalculatorViewModelTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+
+    @Test
+    fun `Evaluates the entered expression correctly and save computation when result not 'NaN'`() =
+        runTest {
+            viewModel.uiState.test {
+                viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
+                viewModel.onNumPadButtonClick(CalculatorButton.Add)
+                viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
+                viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+
+                val uiState = expectMostRecentItem()
+                assertThat(uiState.computation.expression).isEqualTo("1 + 2")
+                assertThat(uiState.computation.result).isEqualTo("3.0")
+            }
+
+            coVerify(exactly = 1) { historyRepository.saveComputation(any()) }
+            confirmVerified(historyRepository)
+        }
+
+    @Test
+    fun `Does not save computation when result was 'NaN'`() {
+        viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
+        viewModel.onNumPadButtonClick(CalculatorButton.Add)
+        viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
+        viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+
+        coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
+        confirmVerified(historyRepository)
+    }
 }

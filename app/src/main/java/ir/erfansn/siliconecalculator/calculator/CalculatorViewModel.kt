@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
-import ir.erfansn.siliconecalculator.data.repository.HistoryRepositoryImpl
 import ir.erfansn.siliconecalculator.utils.Evaluator
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -78,15 +77,18 @@ class CalculatorViewModel(
             CalculatorButton.Equals -> {
                 if (isExpressionIncomplete) return
 
-                _computation.update { it.copy(expression = currentExpression.amendExpression(calculatorButton)) }
+                _computation.update {
+                    it.copy(expression = currentExpression.amendExpression(calculatorButton))
+                }
                 evaluator.expression = calculatorButton.applier(_computation.value.expression)
 
                 operatorsStack.removeAll { it != "$" }
 
                 evaluator.eval()
             }
-            else -> {
-                val expressionWithoutExtraOperator = currentExpression.amendExpression(calculatorButton)
+            CalculatorButton.Add, CalculatorButton.Sub, CalculatorButton.Mul, CalculatorButton.Div -> {
+                val expressionWithoutExtraOperator =
+                    currentExpression.amendExpression(calculatorButton)
                 operatorsStack.push(calculatorButton.symbol)
 
                 calculatorButton.applier(expressionWithoutExtraOperator)
