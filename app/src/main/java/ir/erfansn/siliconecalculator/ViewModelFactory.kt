@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
+import ir.erfansn.siliconecalculator.history.HistoryViewModel
 
 class ViewModelFactory(
     context: Context,
@@ -25,6 +26,7 @@ class ViewModelFactory(
     ) = with(modelClass) {
         when {
             isAssignableFrom(CalculatorViewModel::class.java) -> CalculatorViewModel(handle, historyRepository)
+            isAssignableFrom(HistoryViewModel::class.java) -> HistoryViewModel(historyRepository)
             else -> IllegalArgumentException("Unknown viewmodel class: ${modelClass.name}")
         }
     } as T
