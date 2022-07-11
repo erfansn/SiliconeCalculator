@@ -13,7 +13,7 @@ class CalculatorScreenTest {
     val composeTestRule = createComposeRule()
 
     @Test
-    fun uiState_whenRead_showsExpressionAndResultCorrectly() {
+    fun initialState_whenRead_showsExpressionAndResultCorrectly() {
         composeTestRule.setContent {
             CalculatorScreen(
                 uiState = CalculatorUiState(),
@@ -30,7 +30,7 @@ class CalculatorScreenTest {
     }
 
     @Test
-    fun resultSelector_whenNoExpressionEvaluated_resultIsNotSelectable() {
+    fun computation_whenNoExpressionEvaluated_resultIsNotSelectable() {
         composeTestRule.setContent {
             CalculatorScreen(
                 uiState = CalculatorUiState(
@@ -50,7 +50,7 @@ class CalculatorScreenTest {
     }
 
     @Test
-    fun resultSelector_whenExpressionEvaluated_resultIsSelectable() {
+    fun computation_whenExpressionEvaluated_resultIsSelectable() {
         composeTestRule.setContent {
             CalculatorScreen(
                 uiState = CalculatorUiState(

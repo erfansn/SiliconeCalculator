@@ -34,7 +34,7 @@ import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 
 @Composable
 fun HistoryScreen(
-    uiState: HistoryUiState = HistoryUiState(previewHistoryItems),
+    uiState: HistoryUiState,
     onBackPress: () -> Unit,
     onHistoryClear: () -> Unit,
     onComputationSelect: (Computation) -> Unit = { },
@@ -228,6 +228,7 @@ fun HistoryScreenPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
             HistoryScreen(
+                uiState = HistoryUiState(previewHistoryItems),
                 onBackPress = { },
                 onHistoryClear = { }
             )

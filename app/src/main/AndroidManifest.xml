@@ -15,7 +15,7 @@
         android:theme="@style/Theme.SiliconeCalculator"
         tools:targetApi="31">
         <activity
-            android:name=".CalculatorActivity"
+            android:name=".SiliconeCalculatorActivity"
             android:screenOrientation="portrait"
             android:exported="true"
             android:theme="@style/Theme.SiliconeCalculator">

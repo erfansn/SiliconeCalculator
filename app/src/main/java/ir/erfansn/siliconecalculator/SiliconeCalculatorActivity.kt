@@ -20,10 +20,12 @@ import androidx.navigation.compose.rememberNavController
 import ir.erfansn.siliconecalculator.calculator.CalculatorScreen
 import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
 import ir.erfansn.siliconecalculator.history.HistoryScreen
+import ir.erfansn.siliconecalculator.history.HistoryViewModel
 import ir.erfansn.siliconecalculator.ui.animation.CircularReveal
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
+import ir.erfansn.siliconecalculator.utils.encodeReservedChars
 
-class CalculatorActivity : ComponentActivity() {
+class SiliconeCalculatorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,12 +75,18 @@ fun SiliconeCalculatorScreenActivity(
                 )
             }
             composable("history") {
+                val historyViewModel = viewModel<HistoryViewModel>(
+                    factory = ViewModelFactory(LocalContext.current, it, it.arguments)
+                )
+                val uiState by historyViewModel.uiState.collectAsState()
+
                 HistoryScreen(
-                    onHistoryClear = { },
+                    uiState = uiState,
+                    onHistoryClear = historyViewModel::onHistoryClear,
                     onBackPress = navController::popBackStack,
-                    onComputationSelect = {
+                    onComputationSelect = { (expression, result) ->
                         navController.navigate(
-                            route = "calculator?expression=${it.expression}&result=${it.result}"
+                            route = "calculator?expression=${expression.encodeReservedChars}&result=${result}"
                         ) {
                             launchSingleTop = true
                         }
