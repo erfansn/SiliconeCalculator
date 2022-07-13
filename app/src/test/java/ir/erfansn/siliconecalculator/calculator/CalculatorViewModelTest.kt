@@ -26,7 +26,7 @@ class CalculatorViewModelTest {
 
     @MockK(relaxed = true)
     lateinit var historyRepository: HistoryRepository
-    private lateinit var viewModel: CalculatorViewModel
+    lateinit var viewModel: CalculatorViewModel
 
     @Before
     fun setUp() {

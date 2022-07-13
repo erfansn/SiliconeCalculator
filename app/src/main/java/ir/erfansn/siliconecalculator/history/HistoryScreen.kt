@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +39,7 @@ fun HistoryScreen(
     uiState: HistoryUiState,
     onBackPress: () -> Unit,
     onHistoryClear: () -> Unit,
-    onComputationSelect: (Computation) -> Unit = { },
+    onComputationSelect: (Computation) -> Unit,
 ) {
     ConstraintLayout(
         constraintSet = constraintSet,
@@ -102,11 +104,13 @@ fun HistoryList(
         if (historyItemsByDate.isEmpty()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "There is no record!"
+                text = "Nothing to show!"
             )
         } else {
             LazyColumn(
-                modifier = Modifier.align(Alignment.BottomCenter),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .semantics { contentDescription = "History items" },
                 state = rememberLazyListState(
                     initialFirstVisibleItemIndex = historyItems.size + historyItemsByDate.size
                 ),
@@ -230,7 +234,8 @@ fun HistoryScreenPreview() {
             HistoryScreen(
                 uiState = HistoryUiState(previewHistoryItems),
                 onBackPress = { },
-                onHistoryClear = { }
+                onHistoryClear = { },
+                onComputationSelect = { }
             )
         }
     }

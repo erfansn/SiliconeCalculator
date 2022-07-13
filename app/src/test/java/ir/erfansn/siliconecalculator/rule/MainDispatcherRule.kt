@@ -7,10 +7,9 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 @ExperimentalCoroutinesApi
-class MainDispatcherRule : TestWatcher() {
-
-    private val testScope = TestScope()
-    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(testScope.testScheduler)
+class MainDispatcherRule(
+    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
+) : TestWatcher() {
 
     override fun starting(description: Description) {
         Dispatchers.setMain(testDispatcher)
