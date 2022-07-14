@@ -1,4 +1,4 @@
-package ir.erfansn.siliconecalculator.utils
+package ir.erfansn.siliconecalculator.util
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test

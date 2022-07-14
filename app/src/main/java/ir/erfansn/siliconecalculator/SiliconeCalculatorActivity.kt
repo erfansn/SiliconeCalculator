@@ -9,22 +9,23 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ir.erfansn.siliconecalculator.calculator.CalculatorScreen
 import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
 import ir.erfansn.siliconecalculator.history.HistoryScreen
 import ir.erfansn.siliconecalculator.history.HistoryViewModel
 import ir.erfansn.siliconecalculator.ui.animation.CircularReveal
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
-import ir.erfansn.siliconecalculator.utils.encodeReservedChars
+import ir.erfansn.siliconecalculator.util.encodeReservedChars
 
+@AndroidEntryPoint
 class SiliconeCalculatorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,9 +63,7 @@ fun SiliconeCalculatorScreenActivity(
             startDestination = "calculator?expression={expression}&result={result}",
         ) {
             composable("calculator?expression={expression}&result={result}") {
-                val calculatorViewModel = viewModel<CalculatorViewModel>(
-                    factory = ViewModelFactory(LocalContext.current, it, it.arguments)
-                )
+                val calculatorViewModel = hiltViewModel<CalculatorViewModel>()
                 val uiState by calculatorViewModel.uiState.collectAsState()
 
                 CalculatorScreen(
@@ -75,9 +74,7 @@ fun SiliconeCalculatorScreenActivity(
                 )
             }
             composable("history") {
-                val historyViewModel = viewModel<HistoryViewModel>(
-                    factory = ViewModelFactory(LocalContext.current, it, it.arguments)
-                )
+                val historyViewModel = hiltViewModel<HistoryViewModel>()
                 val uiState by historyViewModel.uiState.collectAsState()
 
                 HistoryScreen(

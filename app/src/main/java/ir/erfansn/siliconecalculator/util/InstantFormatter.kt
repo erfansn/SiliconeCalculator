@@ -1,10 +1,8 @@
-package ir.erfansn.siliconecalculator.utils
+package ir.erfansn.siliconecalculator.util
 
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
-import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 fun Instant.formatToString(): String {
     val targetInstant = this

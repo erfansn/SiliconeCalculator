@@ -3,14 +3,17 @@ package ir.erfansn.siliconecalculator.calculator
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
-import ir.erfansn.siliconecalculator.utils.Evaluator
+import ir.erfansn.siliconecalculator.util.Evaluator
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class CalculatorViewModel(
+@HiltViewModel
+class CalculatorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val historyRepository: HistoryRepository,
 ) : ViewModel() {

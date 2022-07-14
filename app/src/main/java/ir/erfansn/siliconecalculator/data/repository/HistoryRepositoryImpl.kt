@@ -6,8 +6,11 @@ import ir.erfansn.siliconecalculator.data.source.local.HistoryLocalDataSource
 import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
 import ir.erfansn.siliconecalculator.data.source.local.db.model.asHistoryItem
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class HistoryRepositoryImpl(private val historyLocalDataSource: HistoryLocalDataSource) : HistoryRepository {
+class HistoryRepositoryImpl @Inject constructor(
+    private val historyLocalDataSource: HistoryLocalDataSource
+) : HistoryRepository {
 
     override val historyItemsStream = historyLocalDataSource
         .historyEntitiesStream

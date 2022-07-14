@@ -1,4 +1,4 @@
-package ir.erfansn.siliconecalculator.utils
+package ir.erfansn.siliconecalculator.util
 
 import androidx.room.TypeConverter
 import kotlinx.datetime.Instant

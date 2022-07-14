@@ -1,4 +1,4 @@
-package ir.erfansn.siliconecalculator.utils
+package ir.erfansn.siliconecalculator.util
 
 import org.mariuszgromada.math.mxparser.Expression
 

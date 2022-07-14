@@ -1,4 +1,4 @@
-package ir.erfansn.siliconecalculator.utils
+package ir.erfansn.siliconecalculator.util
 
 val String.encodeReservedChars
     get() = replace(

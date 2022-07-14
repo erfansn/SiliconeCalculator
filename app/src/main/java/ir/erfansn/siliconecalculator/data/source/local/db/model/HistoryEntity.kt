@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.model.HistoryItem
-import ir.erfansn.siliconecalculator.utils.formatToString
+import ir.erfansn.siliconecalculator.util.formatToString
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 

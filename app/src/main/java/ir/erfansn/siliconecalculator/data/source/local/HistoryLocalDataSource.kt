@@ -4,8 +4,9 @@ import ir.erfansn.siliconecalculator.data.source.local.db.dao.HistoryDao
 import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class HistoryLocalDataSource(
+class HistoryLocalDataSource @Inject constructor(
     private val historyDao: HistoryDao,
     private val ioDispatcher: CoroutineDispatcher
 ) {

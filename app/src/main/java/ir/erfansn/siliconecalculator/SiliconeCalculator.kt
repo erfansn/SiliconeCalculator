@@ -1,14 +1,8 @@
 package ir.erfansn.siliconecalculator
 
 import android.app.Application
-import ir.erfansn.siliconecalculator.di.AppContainer
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
-class SiliconeCalculator : Application() {
-
-    lateinit var appContainer: AppContainer
-
-    override fun onCreate() {
-        super.onCreate()
-        appContainer = AppContainer(applicationContext)
-    }
-}
+@HiltAndroidApp
+class SiliconeCalculator : Application()
