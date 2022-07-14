@@ -1,18 +1,32 @@
 package ir.erfansn.siliconecalculator.history
 
+import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.model.HistoryItem
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import ir.erfansn.siliconecalculator.R
 
 class HistoryScreenTest {
 
     @get:Rule
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+
+    private lateinit var nothingToShow: String
+    private lateinit var historyItemsList: String
+
+    @Before
+    fun setUp() {
+        composeTestRule.activity.apply {
+            nothingToShow = getString(R.string.nothing_to_show)
+            historyItemsList = getString(R.string.history_items_list)
+        }
+    }
 
     @Test
     fun noItem_whenNoItemForShowing_showAppropriateMessage() {
@@ -25,7 +39,7 @@ class HistoryScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Nothing to show!")
+        composeTestRule.onNodeWithText(nothingToShow)
             .assertExists()
             .assertIsDisplayed()
     }
@@ -41,7 +55,7 @@ class HistoryScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("History items")
+        composeTestRule.onNodeWithContentDescription(historyItemsList)
             .assertExists()
             .assertIsDisplayed()
     }

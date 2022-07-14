@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.SiliconeButton
@@ -79,14 +81,14 @@ fun CalculatorTopBar(
                 .aspectRatio(1.25f),
             onClick = onThemeToggle,
             icon = if (MaterialTheme.colors.isLight) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
-            contentDescription = "Theme changer"
+            contentDescription = stringResource(R.string.theme_changer)
         )
         FlatIconButton(
             modifier = Modifier
                 .aspectRatio(1.25f),
             onClick = onHistoryNav,
             icon = Icons.Outlined.History,
-            contentDescription = "History calculations"
+            contentDescription = stringResource(R.string.calculations_history)
         )
     }
 }
@@ -118,6 +120,7 @@ private fun Display(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.End
     ) {
+        val expressionContentDesc = stringResource(R.string.mathematical_exp)
         Text(
             modifier = Modifier
                 .horizontalScroll(
@@ -126,7 +129,7 @@ private fun Display(
                 )
                 .padding(horizontal = 20.dp)
                 .alpha(ContentAlpha.medium)
-                .semantics { contentDescription = "Mathematical expression" },
+                .semantics { contentDescription = expressionContentDesc },
             text = mathExpression,
             style = MaterialTheme.typography.h4.copy(
                 fontWeight = FontWeight.Light,
@@ -135,6 +138,7 @@ private fun Display(
         )
 
         val resultText: @Composable () -> Unit = {
+            val resultContentDesc = stringResource(R.string.evaluation_result)
             Text(
                 modifier = Modifier
                     .horizontalScroll(
@@ -142,7 +146,7 @@ private fun Display(
                         reverseScrolling = true
                     )
                     .padding(horizontal = 20.dp)
-                    .semantics { contentDescription = "Evaluation result" },
+                    .semantics { contentDescription = resultContentDesc },
                 text = evaluationResult,
                 style = MaterialTheme.typography.h2.copy(
                     fontWeight = FontWeight.Normal,
@@ -162,8 +166,9 @@ private fun Display(
                 backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.4f)
             )
             CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
+                val selectionContainerResult = stringResource(R.string.selection_container_result)
                 SelectionContainer(
-                    modifier = Modifier.semantics { contentDescription = "Selectable result" },
+                    modifier = Modifier.semantics { contentDescription = selectionContainerResult },
                     content = resultText
                 )
             }
@@ -256,8 +261,8 @@ val constraintSet = ConstraintSet {
     constrain(numberPad) {
         linkTo(
             top = topGuideline40,
-            bottom = bottomGuideline3,
             start = parent.start,
+            bottom = bottomGuideline3,
             end = parent.end,
             verticalBias = 1f
         )

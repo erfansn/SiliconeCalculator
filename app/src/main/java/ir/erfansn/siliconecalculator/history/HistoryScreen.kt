@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.model.HistoryItem
 import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
@@ -64,7 +66,8 @@ fun HistoryTopBar(
     onHistoryClear: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.layoutId("top_bar"),
+        modifier = Modifier
+            .layoutId("top_bar"),
         horizontalArrangement = Arrangement.spacedBy(10.dp,
             alignment = Alignment.Start)
     ) {
@@ -73,7 +76,7 @@ fun HistoryTopBar(
                 .aspectRatio(1.25f),
             onClick = onBackPress,
             icon = Icons.Outlined.ArrowBack,
-            contentDescription = "Back to calculator"
+            contentDescription = stringResource(R.string.back_to_calculator)
         )
 
         FlatIconButton(
@@ -81,7 +84,7 @@ fun HistoryTopBar(
                 .aspectRatio(1.25f),
             onClick = onHistoryClear,
             icon = Icons.Outlined.ClearAll,
-            contentDescription = "Clear all records"
+            contentDescription = stringResource(R.string.clear_history)
         )
     }
 }
@@ -104,13 +107,14 @@ fun HistoryList(
         if (historyItemsByDate.isEmpty()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "Nothing to show!"
+                text = stringResource(R.string.nothing_to_show)
             )
         } else {
+            val historyItemsList = stringResource(R.string.history_items_list)
             LazyColumn(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .semantics { contentDescription = "History items" },
+                    .semantics { contentDescription = historyItemsList },
                 state = rememberLazyListState(
                     initialFirstVisibleItemIndex = historyItems.size + historyItemsByDate.size
                 ),
@@ -219,20 +223,43 @@ val constraintSet = ConstraintSet {
 }
 
 @Preview(
-    name = "Light theme",
+    name = "Light theme with items",
     showBackground = true,
 )
 @Preview(
-    name = "Dark theme",
+    name = "Dark theme with items",
     showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun HistoryScreenPreview() {
+fun HistoryScreenWithItemsPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
             HistoryScreen(
                 uiState = HistoryUiState(previewHistoryItems),
+                onBackPress = { },
+                onHistoryClear = { },
+                onComputationSelect = { }
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "Light theme empty",
+    showBackground = true,
+)
+@Preview(
+    name = "Dark theme empty",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+fun HistoryScreenEmptyPreview() {
+    SiliconeCalculatorTheme {
+        Surface(color = MaterialTheme.colors.background) {
+            HistoryScreen(
+                uiState = HistoryUiState(),
                 onBackPress = { },
                 onHistoryClear = { },
                 onComputationSelect = { }
