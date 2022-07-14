@@ -102,7 +102,8 @@ class CalculatorViewModel(
     private val CalculatorButton.isResultNotValidAllowOnlyAllClearButton
         get() = !resultIsValid && this != CalculatorButton.AllClear
 
-    private val resultIsValid get() = _computation.value.result != "NaN"
+    private val resultIsValid get() =
+        _computation.value.result != "NaN" && _computation.value.result != "Infinity"
 
     private fun String.amendExpression(calculatorButton: CalculatorButton): String = when {
         lastNumber.isZero && calculatorButton is CalculatorButton.Digit -> removeLastNumber()

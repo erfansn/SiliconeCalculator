@@ -223,7 +223,6 @@ class CalculatorViewModelTest {
                     .forEach(viewModel::onNumPadButtonClick)
 
                 var uiState = expectMostRecentItem()
-                assertThat(uiState.computation.expression).isEqualTo("0 ÷ .")
                 assertThat(uiState.computation.result).isEqualTo("NaN")
 
                 viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
@@ -237,7 +236,34 @@ class CalculatorViewModelTest {
         }
 
     @Test
-    fun `Evaluates the entered expression correctly and save computation when result not 'NaN'`() =
+    fun `Stops all buttons action when the expression evaluated is 'Infinity' except AllClear button`() =
+        runTest {
+            viewModel.uiState.test {
+                viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+                repeat(1000) {
+                    viewModel.onNumPadButtonClick(CalculatorButton.Digit(9))
+                }
+                viewModel.onNumPadButtonClick(CalculatorButton.Add)
+                viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
+                viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+                buttonList.filter { it != CalculatorButton.AllClear }
+                    .forEach(viewModel::onNumPadButtonClick)
+
+                var uiState = expectMostRecentItem()
+                assertThat(uiState.computation.result).isEqualTo("Infinity")
+
+                viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+
+                uiState = expectMostRecentItem()
+                assertThat(uiState.computation.expression).isEqualTo("")
+                assertThat(uiState.computation.result).isEqualTo("0")
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `Evaluates the entered expression correctly and save computation when result not 'NaN' or 'Infinity'`() =
         runTest {
             viewModel.uiState.test {
                 viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
@@ -255,10 +281,21 @@ class CalculatorViewModelTest {
         }
 
     @Test
-    fun `Does not save computation when result was 'NaN'`() {
+    fun `Does not save computation when result was 'NaN' or 'Infinity'`() {
         viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
         viewModel.onNumPadButtonClick(CalculatorButton.Add)
         viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
+        viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+
+        coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
+        confirmVerified(historyRepository)
+
+        viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+        repeat(1000) {
+            viewModel.onNumPadButtonClick(CalculatorButton.Digit(9))
+        }
+        viewModel.onNumPadButtonClick(CalculatorButton.Add)
+        viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
         viewModel.onNumPadButtonClick(CalculatorButton.Equals)
 
         coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
