@@ -37,7 +37,6 @@ import androidx.constraintlayout.compose.Dimension
 import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
-import ir.erfansn.siliconecalculator.ui.component.SiliconeButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 

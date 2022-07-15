@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterialApi::class)
 
-package ir.erfansn.siliconecalculator.ui.component
+package ir.erfansn.siliconecalculator.calculator
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ir.erfansn.siliconecalculator.ui.theme.BlueGrey800
 
 @Composable
 fun SiliconeButton(
