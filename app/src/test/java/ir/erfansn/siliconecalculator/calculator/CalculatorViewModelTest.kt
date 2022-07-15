@@ -213,6 +213,27 @@ class CalculatorViewModelTest {
     }
 
     @Test
+    fun `Evaluates the completed part of entered expression when it was incomplete`() = runTest {
+        viewModel.uiState.test {
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Add)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.Mul)
+
+            var uiState = expectMostRecentItem()
+            assertThat(uiState.computation.result).isEqualTo("1 + 2 × ")
+
+            viewModel.onNumPadButtonClick(CalculatorAction.Equals)
+
+            uiState = expectMostRecentItem()
+            assertThat(uiState.computation.expression).isEqualTo("1 + 2")
+            assertThat(uiState.computation.result).isEqualTo("3.0")
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `Stops all buttons action when the expression evaluated is 'NaN' except AllClear button`() =
         runTest {
             viewModel.uiState.test {

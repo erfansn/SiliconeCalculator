@@ -114,7 +114,8 @@ class CalculatorViewModel @Inject constructor(
             CalculatorAction.Add,
             CalculatorAction.Sub,
             CalculatorAction.Mul,
-            CalculatorAction.Div
+            CalculatorAction.Div,
+            CalculatorAction.Equals
         ) -> removeLastOperatorAndGet()
         else -> this
     }
