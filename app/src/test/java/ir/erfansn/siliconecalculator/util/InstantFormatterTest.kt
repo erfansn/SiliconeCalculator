@@ -11,7 +11,7 @@ class InstantFormatterTest {
     fun `Returns 'Today' when given Instant is now`() {
         val today = Clock.System.now()
 
-        val formattedDate = today.formatToString()
+        val formattedDate = today.format()
 
         assertThat(formattedDate).isEqualTo("Today")
     }
@@ -20,7 +20,7 @@ class InstantFormatterTest {
     fun `Returns 'Yesterday' when given Instant was yesterday`() {
         val yesterday = Clock.System.now() - 1.days
 
-        val formattedDate = yesterday.formatToString()
+        val formattedDate = yesterday.format()
 
         assertThat(formattedDate).isEqualTo("Yesterday")
     }
@@ -29,7 +29,7 @@ class InstantFormatterTest {
     fun `Returns corresponding date when given Instant was a few days ago`() {
         val fewDayAgo = Clock.System.now() - 2.days
 
-        val formattedDate = fewDayAgo.formatToString()
+        val formattedDate = fewDayAgo.format()
 
         assertThat(formattedDate).isNotEqualTo("Today")
         assertThat(formattedDate).isNotEqualTo("Yesterday")

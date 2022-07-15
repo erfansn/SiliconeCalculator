@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.model.HistoryItem
-import ir.erfansn.siliconecalculator.util.formatToString
+import ir.erfansn.siliconecalculator.util.format
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -19,7 +19,7 @@ data class HistoryEntity(
 
 fun HistoryEntity.asHistoryItem() = HistoryItem(
     id = id,
-    date = instant.formatToString(),
+    date = instant.format(),
     computation = Computation(
         expression = expression,
         result = result
