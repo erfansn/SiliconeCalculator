@@ -12,7 +12,6 @@ import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepositoryImpl
 import ir.erfansn.siliconecalculator.data.source.local.db.SiliconeCalculatorDatabase
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -25,7 +24,7 @@ interface AppModule {
         @Provides
         fun providesIoDispatcher() = Dispatchers.IO
 
-        @[Provides Singleton]
+        @Provides
         fun providesRoomDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
             context,
             SiliconeCalculatorDatabase::class.java,
