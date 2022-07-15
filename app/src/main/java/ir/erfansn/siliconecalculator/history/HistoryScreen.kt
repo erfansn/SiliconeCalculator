@@ -35,6 +35,7 @@ import ir.erfansn.siliconecalculator.data.model.HistoryItem
 import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
+import ir.erfansn.siliconecalculator.util.formatNumbers
 
 @Composable
 fun HistoryScreen(
@@ -174,7 +175,7 @@ fun ComputationItem(
                 .alpha(ContentAlpha.medium)
                 .horizontalScroll(rememberScrollState(), reverseScrolling = true)
                 .padding(horizontal = 16.dp),
-            text = computation.expression,
+            text = computation.expression.formatNumbers(),
             style = textStyle.copy(
                 fontWeight = FontWeight.Light
             )
@@ -183,7 +184,7 @@ fun ComputationItem(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState(), reverseScrolling = true)
                 .padding(horizontal = 16.dp),
-            text = computation.result,
+            text = computation.result.formatNumbers(),
             style = textStyle,
         )
     }
@@ -195,7 +196,7 @@ val constraintSet = ConstraintSet {
 
     val topGuideline1 = createGuidelineFromTop(0.01f)
     val topGuideline9 = createGuidelineFromTop(0.09f)
-    val topGuideline10 = createGuidelineFromTop(0.1f)
+    val topGuideline10 = createGuidelineFromTop(0.11f)
 
     constrain(topBarRef) {
         linkTo(

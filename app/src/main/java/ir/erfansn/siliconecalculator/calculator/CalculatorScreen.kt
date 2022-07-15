@@ -130,7 +130,7 @@ private fun Display(
                 .padding(horizontal = 20.dp)
                 .alpha(ContentAlpha.medium)
                 .semantics { contentDescription = expressionContentDesc },
-            text = mathExpression,
+            text = mathExpression.formatNumbers(),
             style = MaterialTheme.typography.h4.copy(
                 fontWeight = FontWeight.Light,
             ),
@@ -147,7 +147,7 @@ private fun Display(
                     )
                     .padding(horizontal = 20.dp)
                     .semantics { contentDescription = resultContentDesc },
-                text = evaluationResult,
+                text = evaluationResult.formatNumbers(),
                 style = MaterialTheme.typography.h2.copy(
                     fontWeight = FontWeight.Normal,
                     platformStyle = PlatformTextStyle(false),
