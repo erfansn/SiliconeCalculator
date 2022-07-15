@@ -37,9 +37,9 @@ class CalculatorViewModelTest {
     @Test
     fun `Shows '0' when zero button repeatedly is pressed`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(0))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(0))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(0))
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("0")
 
@@ -50,9 +50,9 @@ class CalculatorViewModelTest {
     @Test
     fun `Shows the corresponding number when various digit buttons are pressed`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(0))
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("120")
 
@@ -63,9 +63,9 @@ class CalculatorViewModelTest {
     @Test
     fun `Shows only one decimal point when decimal button repeatedly is pressed`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
+            viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
+            viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
+            viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("0.")
 
@@ -76,11 +76,11 @@ class CalculatorViewModelTest {
     @Test
     fun `Shows decimal number correctly`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(0))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(0))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(0))
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("12.00")
 
@@ -91,10 +91,10 @@ class CalculatorViewModelTest {
     @Test
     fun `Does not add extra decimal point when number has it`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-            viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("1.2")
 
@@ -105,12 +105,12 @@ class CalculatorViewModelTest {
     @Test
     fun `Toggles sign an entered number from plus to minus and vice versa`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-            viewModel.onNumPadButtonClick(CalculatorButton.NumSign)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.NumSign)
             assertThat(expectMostRecentItem().computation.result).isEqualTo("-12.0")
 
-            viewModel.onNumPadButtonClick(CalculatorButton.NumSign)
+            viewModel.onNumPadButtonClick(CalculatorAction.NumSign)
             assertThat(expectMostRecentItem().computation.result).isEqualTo("12.0")
 
             cancelAndIgnoreRemainingEvents()
@@ -120,9 +120,9 @@ class CalculatorViewModelTest {
     @Test
     fun `Calculates and shows one percent of a number`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.Percent)
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("0.12")
 
@@ -133,12 +133,12 @@ class CalculatorViewModelTest {
     @Test
     fun `Assigns minus sign to a number with scientific notation correctly`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.Percent)
-            viewModel.onNumPadButtonClick(CalculatorButton.NumSign)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+            viewModel.onNumPadButtonClick(CalculatorAction.Percent)
+            viewModel.onNumPadButtonClick(CalculatorAction.Percent)
+            viewModel.onNumPadButtonClick(CalculatorAction.Percent)
+            viewModel.onNumPadButtonClick(CalculatorAction.NumSign)
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("-1.2E-5")
 
@@ -149,7 +149,7 @@ class CalculatorViewModelTest {
     @Test
     fun `Adds corresponding operator when an operator button is pressed`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Add)
+            viewModel.onNumPadButtonClick(CalculatorAction.Add)
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("0 + ")
 
@@ -161,10 +161,10 @@ class CalculatorViewModelTest {
     fun `Replaces last operator with corresponding operator when an operator button is pressed`() =
         runTest {
             viewModel.uiState.test {
-                viewModel.onNumPadButtonClick(CalculatorButton.Add)
+                viewModel.onNumPadButtonClick(CalculatorAction.Add)
                 assertThat(expectMostRecentItem().computation.result).isEqualTo("0 + ")
 
-                viewModel.onNumPadButtonClick(CalculatorButton.Mul)
+                viewModel.onNumPadButtonClick(CalculatorAction.Mul)
                 assertThat(expectMostRecentItem().computation.result).isEqualTo("0 × ")
 
                 cancelAndIgnoreRemainingEvents()
@@ -174,8 +174,8 @@ class CalculatorViewModelTest {
     @Test
     fun `Shows entered expression correctly`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Add)
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Add)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
 
             assertThat(expectMostRecentItem().computation.result).isEqualTo("0 + 1")
 
@@ -187,10 +187,10 @@ class CalculatorViewModelTest {
     fun `Changes last number sign and calculates and replaces with one percent of it correctly`() =
         runTest {
             viewModel.uiState.test {
-                viewModel.onNumPadButtonClick(CalculatorButton.Add)
-                viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-                viewModel.onNumPadButtonClick(CalculatorButton.NumSign)
-                viewModel.onNumPadButtonClick(CalculatorButton.Percent)
+                viewModel.onNumPadButtonClick(CalculatorAction.Add)
+                viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+                viewModel.onNumPadButtonClick(CalculatorAction.NumSign)
+                viewModel.onNumPadButtonClick(CalculatorAction.Percent)
 
                 assertThat(expectMostRecentItem().computation.result).isEqualTo("0 + -0.01")
 
@@ -201,9 +201,9 @@ class CalculatorViewModelTest {
     @Test
     fun `No evaluates the entered expression when it was incomplete`() = runTest {
         viewModel.uiState.test {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-            viewModel.onNumPadButtonClick(CalculatorButton.Div)
-            viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+            viewModel.onNumPadButtonClick(CalculatorAction.Div)
+            viewModel.onNumPadButtonClick(CalculatorAction.Equals)
 
             val uiState = expectMostRecentItem()
             assertThat(uiState.computation.result).isEqualTo("1 ÷ ")
@@ -216,16 +216,16 @@ class CalculatorViewModelTest {
     fun `Stops all buttons action when the expression evaluated is 'NaN' except AllClear button`() =
         runTest {
             viewModel.uiState.test {
-                viewModel.onNumPadButtonClick(CalculatorButton.Div)
-                viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-                viewModel.onNumPadButtonClick(CalculatorButton.Equals)
-                buttonList.filter { it != CalculatorButton.AllClear }
+                viewModel.onNumPadButtonClick(CalculatorAction.Div)
+                viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
+                viewModel.onNumPadButtonClick(CalculatorAction.Equals)
+                calculatorActionsList.filter { it != CalculatorAction.AllClear }
                     .forEach(viewModel::onNumPadButtonClick)
 
                 var uiState = expectMostRecentItem()
                 assertThat(uiState.computation.result).isEqualTo("NaN")
 
-                viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+                viewModel.onNumPadButtonClick(CalculatorAction.AllClear)
 
                 uiState = expectMostRecentItem()
                 assertThat(uiState.computation.expression).isEqualTo("")
@@ -239,20 +239,20 @@ class CalculatorViewModelTest {
     fun `Stops all buttons action when the expression evaluated is 'Infinity' except AllClear button`() =
         runTest {
             viewModel.uiState.test {
-                viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+                viewModel.onNumPadButtonClick(CalculatorAction.AllClear)
                 repeat(1000) {
-                    viewModel.onNumPadButtonClick(CalculatorButton.Digit(9))
+                    viewModel.onNumPadButtonClick(CalculatorAction.Digit(9))
                 }
-                viewModel.onNumPadButtonClick(CalculatorButton.Add)
-                viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-                viewModel.onNumPadButtonClick(CalculatorButton.Equals)
-                buttonList.filter { it != CalculatorButton.AllClear }
+                viewModel.onNumPadButtonClick(CalculatorAction.Add)
+                viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+                viewModel.onNumPadButtonClick(CalculatorAction.Equals)
+                calculatorActionsList.filter { it != CalculatorAction.AllClear }
                     .forEach(viewModel::onNumPadButtonClick)
 
                 var uiState = expectMostRecentItem()
                 assertThat(uiState.computation.result).isEqualTo("Infinity")
 
-                viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+                viewModel.onNumPadButtonClick(CalculatorAction.AllClear)
 
                 uiState = expectMostRecentItem()
                 assertThat(uiState.computation.expression).isEqualTo("")
@@ -266,10 +266,10 @@ class CalculatorViewModelTest {
     fun `Evaluates the entered expression correctly and save computation when result not 'NaN' or 'Infinity'`() =
         runTest {
             viewModel.uiState.test {
-                viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-                viewModel.onNumPadButtonClick(CalculatorButton.Add)
-                viewModel.onNumPadButtonClick(CalculatorButton.Digit(2))
-                viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+                viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+                viewModel.onNumPadButtonClick(CalculatorAction.Add)
+                viewModel.onNumPadButtonClick(CalculatorAction.Digit(2))
+                viewModel.onNumPadButtonClick(CalculatorAction.Equals)
 
                 val uiState = expectMostRecentItem()
                 assertThat(uiState.computation.expression).isEqualTo("1 + 2")
@@ -282,21 +282,21 @@ class CalculatorViewModelTest {
 
     @Test
     fun `Does not save computation when result was 'NaN' or 'Infinity'`() {
-        viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-        viewModel.onNumPadButtonClick(CalculatorButton.Add)
-        viewModel.onNumPadButtonClick(CalculatorButton.Decimal)
-        viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+        viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+        viewModel.onNumPadButtonClick(CalculatorAction.Add)
+        viewModel.onNumPadButtonClick(CalculatorAction.Decimal)
+        viewModel.onNumPadButtonClick(CalculatorAction.Equals)
 
         coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
         confirmVerified(historyRepository)
 
-        viewModel.onNumPadButtonClick(CalculatorButton.AllClear)
+        viewModel.onNumPadButtonClick(CalculatorAction.AllClear)
         repeat(1000) {
-            viewModel.onNumPadButtonClick(CalculatorButton.Digit(9))
+            viewModel.onNumPadButtonClick(CalculatorAction.Digit(9))
         }
-        viewModel.onNumPadButtonClick(CalculatorButton.Add)
-        viewModel.onNumPadButtonClick(CalculatorButton.Digit(1))
-        viewModel.onNumPadButtonClick(CalculatorButton.Equals)
+        viewModel.onNumPadButtonClick(CalculatorAction.Add)
+        viewModel.onNumPadButtonClick(CalculatorAction.Digit(1))
+        viewModel.onNumPadButtonClick(CalculatorAction.Equals)
 
         coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
         confirmVerified(historyRepository)

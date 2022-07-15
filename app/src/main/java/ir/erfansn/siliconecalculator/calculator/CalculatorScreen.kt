@@ -39,11 +39,12 @@ import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
+import ir.erfansn.siliconecalculator.util.formatNumbers
 
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
-    onNumPadButtonClick: (CalculatorButton) -> Unit,
+    onNumPadButtonClick: (CalculatorAction) -> Unit,
     onHistoryNav: () -> Unit,
     onThemeToggle: () -> Unit,
 ) {
@@ -94,7 +95,7 @@ fun CalculatorTopBar(
 
 @Composable
 fun CalculatorContent(
-    onNumPadButtonClick: (CalculatorButton) -> Unit,
+    onNumPadButtonClick: (CalculatorAction) -> Unit,
     mathExpression: String,
     evaluationResult: String,
 ) {
@@ -180,7 +181,7 @@ private fun Display(
 @Composable
 private fun NumberPad(
     calculatorState: CalculatorState = rememberCalculatorState(),
-    onButtonClick: (CalculatorButton) -> Unit,
+    onButtonClick: (CalculatorAction) -> Unit,
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -275,10 +276,10 @@ private const val BUTTON_LAYOUT_COLUMNS_COUNT = 4
 
 @Stable
 object CalculatorState {
-    private val buttonsRowList = buttonList.chunked(BUTTON_LAYOUT_COLUMNS_COUNT)
+    private val buttonsRowList = calculatorActionsList.chunked(BUTTON_LAYOUT_COLUMNS_COUNT)
 
     val buttonsCharacteristic
-        get() = buttonList.map {
+        get() = calculatorActionsList.map {
             Triple(it, buttonCategory(it), buttonWidthRatio(it))
         }
 
@@ -288,13 +289,13 @@ object CalculatorState {
         return buttonWidth * 0.04f
     }
 
-    private fun buttonWidthRatio(button: CalculatorButton): Int {
-        return if (button == CalculatorButton.Digit(0)) 2 else 1
+    private fun buttonWidthRatio(button: CalculatorAction): Int {
+        return if (button == CalculatorAction.Digit(0)) 2 else 1
     }
 
-    private fun buttonCategory(button: CalculatorButton): ButtonCategory {
+    private fun buttonCategory(button: CalculatorAction): ButtonCategory {
         return when (button) {
-            in buttonsRowList.map(List<CalculatorButton>::last) -> ButtonCategory.OPERATOR
+            in buttonsRowList.map(List<CalculatorAction>::last) -> ButtonCategory.OPERATOR
             in buttonsRowList.first() -> ButtonCategory.FUNC
             else -> ButtonCategory.DIGIT
         }

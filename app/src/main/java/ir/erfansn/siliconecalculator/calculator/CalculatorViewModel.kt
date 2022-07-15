@@ -51,70 +51,70 @@ class CalculatorViewModel @Inject constructor(
         }
     }
 
-    fun onNumPadButtonClick(calculatorButton: CalculatorButton) {
-        if (calculatorButton.isResultNotValidAllowOnlyAllClearButton) return
+    fun onNumPadButtonClick(calculatorAction: CalculatorAction) {
+        if (calculatorAction.isResultNotValidAllowOnlyAllClearButton) return
 
-        val result = when (calculatorButton) {
-            is CalculatorButton.Digit -> {
-                val expressionWithoutExtraZero = currentExpression.amendExpression(calculatorButton)
+        val result = when (calculatorAction) {
+            is CalculatorAction.Digit -> {
+                val expressionWithoutExtraZero = currentExpression.amendExpression(calculatorAction)
 
-                calculatorButton.applier(expressionWithoutExtraZero)
+                calculatorAction.applier(expressionWithoutExtraZero)
             }
-            CalculatorButton.Decimal -> {
-                if (calculatorButton.symbol in currentExpression.lastNumber) return
+            CalculatorAction.Decimal -> {
+                if (calculatorAction.symbol in currentExpression.lastNumber) return
 
-                calculatorButton.applier(currentExpression)
+                calculatorAction.applier(currentExpression)
             }
-            CalculatorButton.AllClear -> {
+            CalculatorAction.AllClear -> {
                 _computation.update { it.copy(expression = "") }
 
-                calculatorButton.applier(currentExpression)
+                calculatorAction.applier(currentExpression)
             }
-            CalculatorButton.NumSign, CalculatorButton.Percent -> {
+            CalculatorAction.NumSign, CalculatorAction.Percent -> {
                 if (currentExpression.lastElementIsOperator) return
 
-                evaluator.expression = calculatorButton.applier(currentExpression.lastNumber)
+                evaluator.expression = calculatorAction.applier(currentExpression.lastNumber)
 
                 currentExpression.replaceLastNumberWith(evaluator.eval())
             }
-            CalculatorButton.Equals -> {
+            CalculatorAction.Equals -> {
                 if (isExpressionIncomplete) return
 
                 _computation.update {
-                    it.copy(expression = currentExpression.amendExpression(calculatorButton))
+                    it.copy(expression = currentExpression.amendExpression(calculatorAction))
                 }
-                evaluator.expression = calculatorButton.applier(_computation.value.expression)
+                evaluator.expression = calculatorAction.applier(_computation.value.expression)
 
                 operatorsStack.removeAll { it != "$" }
 
                 evaluator.eval()
             }
-            CalculatorButton.Add, CalculatorButton.Sub, CalculatorButton.Mul, CalculatorButton.Div -> {
+            CalculatorAction.Add, CalculatorAction.Sub, CalculatorAction.Mul, CalculatorAction.Div -> {
                 val expressionWithoutExtraOperator =
-                    currentExpression.amendExpression(calculatorButton)
-                operatorsStack.push(calculatorButton.symbol)
+                    currentExpression.amendExpression(calculatorAction)
+                operatorsStack.push(calculatorAction.symbol)
 
-                calculatorButton.applier(expressionWithoutExtraOperator)
+                calculatorAction.applier(expressionWithoutExtraOperator)
             }
         }
         _computation.update { it.copy(result = result) }
 
-        if (calculatorButton.evaluationWasSuccess) saveComputationInHistory()
+        if (calculatorAction.evaluationWasSuccess) saveComputationInHistory()
     }
 
-    private val CalculatorButton.isResultNotValidAllowOnlyAllClearButton
-        get() = !resultIsValid && this != CalculatorButton.AllClear
+    private val CalculatorAction.isResultNotValidAllowOnlyAllClearButton
+        get() = !resultIsValid && this != CalculatorAction.AllClear
 
     private val resultIsValid get() =
         _computation.value.result != "NaN" && _computation.value.result != "Infinity"
 
-    private fun String.amendExpression(calculatorButton: CalculatorButton): String = when {
-        lastNumber.isZero && calculatorButton is CalculatorButton.Digit -> removeLastNumber()
-        lastElementIsOperator && calculatorButton in listOf(
-            CalculatorButton.Add,
-            CalculatorButton.Sub,
-            CalculatorButton.Mul,
-            CalculatorButton.Div
+    private fun String.amendExpression(calculatorAction: CalculatorAction): String = when {
+        lastNumber.isZero && calculatorAction is CalculatorAction.Digit -> removeLastNumber()
+        lastElementIsOperator && calculatorAction in listOf(
+            CalculatorAction.Add,
+            CalculatorAction.Sub,
+            CalculatorAction.Mul,
+            CalculatorAction.Div
         ) -> removeLastOperatorAndGet()
         else -> this
     }
@@ -142,8 +142,8 @@ class CalculatorViewModel @Inject constructor(
         )
     }
 
-    private val CalculatorButton.evaluationWasSuccess
-        get() = this == CalculatorButton.Equals && resultIsValid
+    private val CalculatorAction.evaluationWasSuccess
+        get() = this == CalculatorAction.Equals && resultIsValid
 
     private fun saveComputationInHistory() {
         viewModelScope.launch {
