@@ -112,7 +112,7 @@ fun SiliconeButton(
 
 @Preview(showBackground = true)
 @Composable
-fun NeuButtonPreview() {
+fun SiliconeButtonPreview() {
     MaterialTheme {
         SiliconeButton(
             modifier = Modifier.padding(10.dp),

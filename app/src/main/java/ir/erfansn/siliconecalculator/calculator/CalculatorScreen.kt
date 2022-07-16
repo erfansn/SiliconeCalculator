@@ -24,7 +24,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +51,7 @@ fun CalculatorScreen(
         constraintSet = constraintSet,
         modifier = Modifier
             .fillMaxSize()
-            .safeGesturesPadding(),
+            .safeContentPadding(),
     ) {
         CalculatorTopBar(
             onThemeToggle = onThemeToggle,
@@ -185,6 +184,7 @@ private fun NumberPad(
 ) {
     BoxWithConstraints(
         modifier = Modifier
+            .padding(horizontal = 8.dp)
             .aspectRatio(calculatorState.buttonsLayoutAspectRation)
             .layoutId("number_pad")
     ) {
@@ -215,7 +215,7 @@ private fun NumberPad(
                     Text(
                         text = button.symbol,
                         color = contentColorFor(backgroundColor = buttonColor),
-                        style = TextStyle(
+                        style = MaterialTheme.typography.button.copy(
                             fontSize = with(LocalDensity.current) {
                                 (maxHeight * 0.33f).toSp()
                             },
