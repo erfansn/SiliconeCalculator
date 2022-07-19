@@ -51,6 +51,11 @@ class MathExpressionFormatterTest {
     }
 
     @Test
+    fun `Returns '-100dot0000E-000' when given input is '-100dot0000E-000'`() {
+        assertThat("-100.0000E-000".formatNumbers()).isEqualTo("-100.0000E-000")
+    }
+
+    @Test
     fun `Returns '1,000dot0E0,000 + 1,000' when given input is '1000dot0000E0,000 + 1000'`() {
         assertThat("1000dot0E0,000 + 1000".formatNumbers()).isEqualTo("1,000dot0E0,000 + 1,000")
     }
