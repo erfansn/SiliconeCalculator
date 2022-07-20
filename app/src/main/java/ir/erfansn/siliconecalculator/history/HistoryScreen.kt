@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -9,24 +12,26 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ClearAll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -36,9 +41,12 @@ import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Computation
 import ir.erfansn.siliconecalculator.data.model.HistoryItem
 import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
-import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
-import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
+import ir.erfansn.siliconecalculator.ui.component.CorneredFlatButton
+import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
+import ir.erfansn.siliconecalculator.ui.component.OutlinedCorneredFlatButton
+import ir.erfansn.siliconecalculator.ui.theme.*
 import ir.erfansn.siliconecalculator.util.formatNumbers
+import kotlinx.coroutines.launch
 
 @Composable
 fun HistoryScreen(
@@ -47,21 +55,107 @@ fun HistoryScreen(
     onHistoryClear: () -> Unit,
     onComputationSelect: (Computation) -> Unit,
 ) {
-    ConstraintLayout(
-        constraintSet = constraintSet,
-        modifier = Modifier
-            .fillMaxSize()
-            .safeContentPadding(),
+    val coroutineScope = rememberCoroutineScope()
+    val clearHistoryBottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden
+    )
+
+    BackHandler {
+        if (clearHistoryBottomSheetState.isVisible) {
+            coroutineScope.launch { clearHistoryBottomSheetState.hide() }
+        } else {
+            onBackPress()
+        }
+    }
+    ModalBottomSheetLayout(
+        sheetBackgroundColor = MaterialTheme.colors.background,
+        sheetState = clearHistoryBottomSheetState,
+        sheetShape = MaterialTheme.shapes.large.copy(
+            bottomEnd = CornerSize(0.dp),
+            bottomStart = CornerSize(0.dp)
+        ),
+        scrimColor = Color.Black.copy(0.32f),
+        sheetContent = {
+            ClearHistoryBottomSheetContent(
+                onCancelClick = {
+                    coroutineScope.launch { clearHistoryBottomSheetState.hide() }
+                },
+                onClearClick = {
+                    coroutineScope.launch {
+                        onHistoryClear()
+                        clearHistoryBottomSheetState.hide()
+                    }
+                }
+            )
+        }
     ) {
-        HistoryTopBar(
-            onBackPress = onBackPress,
-            onHistoryClear = onHistoryClear
+        ConstraintLayout(
+            constraintSet = constraintSet,
+            modifier = Modifier
+                .fillMaxSize()
+                .safeContentPadding(),
+        ) {
+            HistoryTopBar(
+                onBackPress = onBackPress,
+                onHistoryClear = { coroutineScope.launch { clearHistoryBottomSheetState.show() } }
+            )
+            HistoryList(
+                historyItems = uiState.historyItems,
+                onComputationSelect = onComputationSelect
+            )
+        }
+    }
+}
+
+@Composable
+fun ColumnScope.ClearHistoryBottomSheetContent(
+    onCancelClick: () -> Unit,
+    onClearClick: () -> Unit
+) {
+    Spacer(modifier = Modifier.height(28.dp))
+
+    Column(
+        modifier = Modifier.align(CenterHorizontally),
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Clear",
+            style = MaterialTheme.typography.h6
         )
-        HistoryList(
-            historyItems = uiState.historyItems,
-            onComputationSelect = onComputationSelect
+        Text(
+            text = "Clear history now?",
+            style = MaterialTheme.typography.body1
         )
     }
+
+    Spacer(modifier = Modifier.height(32.dp))
+
+    Row(
+        modifier = Modifier
+            .wrapContentWidth()
+            .height(48.dp)
+            .align(CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        OutlinedCorneredFlatButton(
+            modifier = Modifier.aspectRatio(2.5f),
+            onClick = onCancelClick
+        ) {
+            Text(text = "Cancel")
+        }
+
+        CorneredFlatButton(
+            modifier = Modifier.aspectRatio(2.5f),
+            onClick = onClearClick
+        ) {
+            Text(text = "Clear")
+        }
+    }
+
+    Spacer(modifier = Modifier.height(
+        16.dp + WindowInsets.safeContent.asPaddingValues().calculateBottomPadding()
+    ))
 }
 
 @Composable
@@ -75,17 +169,15 @@ fun HistoryTopBar(
         horizontalArrangement = Arrangement.spacedBy(10.dp,
             alignment = Alignment.Start)
     ) {
-        FlatIconButton(
-            modifier = Modifier
-                .aspectRatio(1.25f),
+        val baseModifier = Modifier.aspectRatio(1.25f)
+        CorneredFlatIconButton(
+            modifier = baseModifier,
             onClick = onBackPress,
             icon = Icons.Outlined.ArrowBack,
             contentDescription = stringResource(R.string.back_to_calculator)
         )
-
-        FlatIconButton(
-            modifier = Modifier
-                .aspectRatio(1.25f),
+        CorneredFlatIconButton(
+            modifier = baseModifier,
             onClick = onHistoryClear,
             icon = Icons.Outlined.ClearAll,
             contentDescription = stringResource(R.string.clear_history)
@@ -153,12 +245,20 @@ private fun LazyListScope.historyItem(
     }
     item {
         Text(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(
+                vertical = 12.dp,
+                horizontal = 28.dp
+            ),
             text = date,
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.subtitle1.copy(
+                fontWeight = FontWeight.Medium,
+            )
         )
         if (!isLastItem) {
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            Divider(modifier = Modifier.padding(
+                vertical = 8.dp,
+                horizontal = 16.dp
+            ))
         }
     }
 }
@@ -166,7 +266,7 @@ private fun LazyListScope.historyItem(
 @Composable
 fun ComputationItem(
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.h4,
+    textStyle: TextStyle = MaterialTheme.typography.h5,
     computation: Computation,
 ) {
     Column(
@@ -239,33 +339,12 @@ val constraintSet = ConstraintSet {
 fun HistoryScreenWithItemsPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
-            HistoryScreen(
-                uiState = HistoryUiState(previewHistoryItems),
-                onBackPress = { },
-                onHistoryClear = { },
-                onComputationSelect = { }
-            )
-        }
-    }
-}
+            val computations = mutableListOf(*previewHistoryItems.toTypedArray())
 
-@Preview(
-    name = "Light theme empty",
-    showBackground = true,
-)
-@Preview(
-    name = "Dark theme empty",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
-@Composable
-fun HistoryScreenEmptyPreview() {
-    SiliconeCalculatorTheme {
-        Surface(color = MaterialTheme.colors.background) {
             HistoryScreen(
-                uiState = HistoryUiState(),
+                uiState = HistoryUiState(computations),
                 onBackPress = { },
-                onHistoryClear = { },
+                onHistoryClear = { computations.clear() },
                 onComputationSelect = { }
             )
         }

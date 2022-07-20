@@ -1,15 +1,16 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package ir.erfansn.siliconecalculator
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -91,24 +92,5 @@ fun SiliconeCalculatorScreenActivity(
                 )
             }
         }
-    }
-}
-
-@Preview(
-    name = "Light theme",
-    showBackground = true,
-)
-@Preview(
-    name = "Dark theme",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
-@Composable
-fun DefaultPreview() {
-    SiliconeCalculatorTheme {
-        SiliconeCalculatorScreenActivity(
-            navController = rememberNavController(),
-            onThemeToggle = { }
-        )
     }
 }

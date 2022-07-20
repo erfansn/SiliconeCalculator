@@ -35,7 +35,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Computation
-import ir.erfansn.siliconecalculator.ui.component.FlatIconButton
+import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 import ir.erfansn.siliconecalculator.util.formatNumbers
@@ -75,16 +75,16 @@ fun CalculatorTopBar(
         horizontalArrangement = Arrangement.spacedBy(10.dp,
             alignment = Alignment.Start)
     ) {
-        FlatIconButton(
-            modifier = Modifier
-                .aspectRatio(1.25f),
+        val baseModifier = Modifier.aspectRatio(1.25f)
+
+        CorneredFlatIconButton(
+            modifier = baseModifier,
             onClick = onThemeToggle,
             icon = if (MaterialTheme.colors.isLight) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
             contentDescription = stringResource(R.string.theme_changer)
         )
-        FlatIconButton(
-            modifier = Modifier
-                .aspectRatio(1.25f),
+        CorneredFlatIconButton(
+            modifier = baseModifier,
             onClick = onHistoryNav,
             icon = Icons.Outlined.History,
             contentDescription = stringResource(R.string.calculations_history)
@@ -130,7 +130,7 @@ private fun Display(
                 .alpha(ContentAlpha.medium)
                 .semantics { contentDescription = expressionContentDesc },
             text = mathExpression.formatNumbers(),
-            style = MaterialTheme.typography.h4.copy(
+            style = MaterialTheme.typography.h5.copy(
                 fontWeight = FontWeight.Light,
             ),
             textAlign = TextAlign.Center,
@@ -147,7 +147,7 @@ private fun Display(
                     .padding(horizontal = 20.dp)
                     .semantics { contentDescription = resultContentDesc },
                 text = evaluationResult.formatNumbers(),
-                style = MaterialTheme.typography.h2.copy(
+                style = MaterialTheme.typography.h3.copy(
                     fontWeight = FontWeight.Normal,
                     platformStyle = PlatformTextStyle(false),
                     lineHeightStyle = LineHeightStyle(
