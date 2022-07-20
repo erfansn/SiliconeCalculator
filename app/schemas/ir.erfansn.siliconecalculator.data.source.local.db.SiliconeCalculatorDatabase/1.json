@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4f663f64ebfab69448b8cb453aeade7b",
+    "identityHash": "8371c7ca03afa6640c1b034b87386d83",
     "entities": [
       {
         "tableName": "History",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `expression` TEXT NOT NULL, `result` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `epoch_day` INTEGER NOT NULL, `expression` TEXT NOT NULL, `result` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,8 +15,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "instant",
-            "columnName": "timestamp",
+            "fieldPath": "date",
+            "columnName": "epoch_day",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -46,7 +46,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4f663f64ebfab69448b8cb453aeade7b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8371c7ca03afa6640c1b034b87386d83')"
     ]
   }
 }
