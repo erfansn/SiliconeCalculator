@@ -1,9 +1,10 @@
-@file:OptIn(ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 
 package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -25,7 +26,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -44,7 +44,7 @@ import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatButton
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.OutlinedCorneredFlatButton
-import ir.erfansn.siliconecalculator.ui.theme.*
+import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 import ir.erfansn.siliconecalculator.util.formatNumbers
 import kotlinx.coroutines.launch
 
@@ -83,7 +83,7 @@ fun HistoryScreen(
                 onClearClick = {
                     coroutineScope.launch {
                         onHistoryClear()
-                        clearHistoryBottomSheetState.hide()
+                        onBackPress()
                     }
                 }
             )
