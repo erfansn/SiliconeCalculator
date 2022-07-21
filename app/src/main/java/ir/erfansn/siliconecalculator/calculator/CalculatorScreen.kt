@@ -17,8 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -202,6 +204,7 @@ private fun NumberPad(
                     ButtonCategory.FUNC -> MaterialTheme.colors.primaryVariant
                     ButtonCategory.DIGIT -> MaterialTheme.colors.primary
                 }
+                val hapticFeedback = LocalHapticFeedback.current
                 SiliconeButton(
                     modifier = Modifier
                         .span(
@@ -210,7 +213,10 @@ private fun NumberPad(
                         )
                         .padding(spaceBetweenButtons),
                     lightColor = buttonColor,
-                    onClick = { onButtonClick(button) }
+                    onClick = {
+                        onButtonClick(button)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
                 ) {
                     Text(
                         text = button.symbol,
