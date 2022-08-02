@@ -11,20 +11,20 @@ import dagger.hilt.components.SingletonComponent
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepositoryImpl
 import ir.erfansn.siliconecalculator.data.source.local.db.SiliconeCalculatorDatabase
-import kotlinx.coroutines.Dispatchers
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface AppModule {
 
     @Binds
-    fun bindsHistoryRepository(historyRepositoryImpl: HistoryRepositoryImpl): HistoryRepository
+    fun bindsHistoryRepository(
+        historyRepositoryImpl: HistoryRepositoryImpl,
+    ): HistoryRepository
 
     companion object {
-        @Provides
-        fun providesIoDispatcher() = Dispatchers.IO
 
-        @Provides
+        @[Provides Singleton]
         fun providesRoomDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
             context,
             SiliconeCalculatorDatabase::class.java,
