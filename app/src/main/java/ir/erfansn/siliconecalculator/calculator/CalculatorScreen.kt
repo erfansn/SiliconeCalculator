@@ -21,6 +21,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -36,7 +37,22 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import ir.erfansn.siliconecalculator.R
-import ir.erfansn.siliconecalculator.data.model.Computation
+import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_COLUMNS_COUNT
+import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_ROW_COUNT
+import ir.erfansn.siliconecalculator.calculator.NumberPadState.color
+import ir.erfansn.siliconecalculator.calculator.NumberPadState.widthRatio
+import ir.erfansn.siliconecalculator.calculator.button.CalculatorButton
+import ir.erfansn.siliconecalculator.calculator.button.calculatorButtons
+import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.common.Digit
+import ir.erfansn.siliconecalculator.calculator.button.function.Equals
+import ir.erfansn.siliconecalculator.calculator.button.function.NumSign
+import ir.erfansn.siliconecalculator.calculator.button.function.Percent
+import ir.erfansn.siliconecalculator.calculator.button.operator.Add
+import ir.erfansn.siliconecalculator.calculator.button.operator.Div
+import ir.erfansn.siliconecalculator.calculator.button.operator.Mul
+import ir.erfansn.siliconecalculator.calculator.button.operator.Sub
+import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
@@ -45,7 +61,7 @@ import ir.erfansn.siliconecalculator.util.formatNumbers
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
-    onNumPadButtonClick: (CalculatorAction) -> Unit,
+    onCalculatorButtonClick: (CalculatorButton) -> Unit,
     onHistoryNav: () -> Unit,
     onThemeToggle: () -> Unit,
 ) {
@@ -60,7 +76,7 @@ fun CalculatorScreen(
             onHistoryNav = onHistoryNav,
         )
         CalculatorContent(
-            onNumPadButtonClick = onNumPadButtonClick,
+            onCalculatorButtonClick = onCalculatorButtonClick,
             mathExpression = uiState.computation.expression,
             evaluationResult = uiState.computation.result
         )
@@ -96,7 +112,7 @@ fun CalculatorTopBar(
 
 @Composable
 fun CalculatorContent(
-    onNumPadButtonClick: (CalculatorAction) -> Unit,
+    onCalculatorButtonClick: (CalculatorButton) -> Unit,
     mathExpression: String,
     evaluationResult: String,
 ) {
@@ -104,8 +120,8 @@ fun CalculatorContent(
         mathExpression = mathExpression,
         evaluationResult = evaluationResult,
     )
-    NumberPad(
-        onButtonClick = onNumPadButtonClick
+    KeyLayout(
+        onButtonClick = onCalculatorButtonClick
     )
 }
 
@@ -138,81 +154,68 @@ private fun Display(
             textAlign = TextAlign.Center,
         )
 
-        val resultText: @Composable () -> Unit = {
-            val resultContentDesc = stringResource(R.string.evaluation_result)
-            Text(
-                modifier = Modifier
-                    .horizontalScroll(
-                        state = rememberScrollState(),
-                        reverseScrolling = true
-                    )
-                    .padding(horizontal = 20.dp)
-                    .semantics { contentDescription = resultContentDesc },
-                text = evaluationResult.formatNumbers(),
-                style = MaterialTheme.typography.h3.copy(
-                    fontWeight = FontWeight.Normal,
-                    platformStyle = PlatformTextStyle(false),
-                    lineHeightStyle = LineHeightStyle(
-                        alignment = LineHeightStyle.Alignment.Center,
-                        trim = LineHeightStyle.Trim.None
-                    )
-                ),
-            )
-        }
-        val resultIsSelectable =
-            mathExpression.isNotEmpty() && evaluationResult.toDoubleOrNull() != null
-        if (resultIsSelectable) {
-            val customTextSelectionColors = TextSelectionColors(
-                handleColor = MaterialTheme.colors.secondary,
-                backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.4f)
-            )
-            CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
-                val selectionContainerResult = stringResource(R.string.selection_container_result)
-                SelectionContainer(
-                    modifier = Modifier.semantics { contentDescription = selectionContainerResult },
-                    content = resultText
+        val customTextSelectionColors = TextSelectionColors(
+            handleColor = MaterialTheme.colors.secondary,
+            backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.4f)
+        )
+        CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
+            val selectionContainerResult = stringResource(R.string.selection_container_result)
+            SelectionContainer(
+                modifier = Modifier.semantics { contentDescription = selectionContainerResult },
+            ) {
+                val resultContentDesc = stringResource(R.string.evaluation_result)
+                Text(
+                    modifier = Modifier
+                        .horizontalScroll(
+                            state = rememberScrollState(),
+                            reverseScrolling = true
+                        )
+                        .padding(horizontal = 20.dp)
+                        .semantics { contentDescription = resultContentDesc },
+                    text = evaluationResult.formatNumbers(),
+                    style = MaterialTheme.typography.h3.copy(
+                        fontWeight = FontWeight.Normal,
+                        platformStyle = PlatformTextStyle(false),
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.None
+                        )
+                    ),
                 )
             }
-        } else {
-            resultText()
         }
     }
 }
 
 @Composable
-private fun NumberPad(
-    calculatorState: CalculatorState = rememberCalculatorState(),
-    onButtonClick: (CalculatorAction) -> Unit,
+private fun KeyLayout(
+    calculatorState: NumberPadState = rememberNumberPadState(),
+    onButtonClick: (CalculatorButton) -> Unit,
 ) {
     BoxWithConstraints(
         modifier = Modifier
             .padding(horizontal = 8.dp)
-            .aspectRatio(calculatorState.buttonsLayoutAspectRation)
-            .layoutId("number_pad")
+            .aspectRatio(BUTTONS_LAYOUT_COLUMNS_COUNT / BUTTONS_LAYOUT_ROW_COUNT.toFloat())
+            .layoutId("key_layout")
     ) {
         Grid(
-            columns = BUTTON_LAYOUT_COLUMNS_COUNT,
+            columns = BUTTONS_LAYOUT_COLUMNS_COUNT,
             modifier = Modifier.fillMaxSize(),
         ) {
-            val buttonSizeWithoutSpacing = maxWidth / BUTTON_LAYOUT_COLUMNS_COUNT
+            val buttonSizeWithoutSpacing = maxWidth / BUTTONS_LAYOUT_COLUMNS_COUNT
             val spaceBetweenButtons =
                 calculatorState.calculateButtonSpacing(buttonSizeWithoutSpacing)
 
-            for ((button, category, widthRatio) in calculatorState.buttonsCharacteristic) {
-                val buttonColor = when (category) {
-                    ButtonCategory.OPERATOR -> MaterialTheme.colors.secondary
-                    ButtonCategory.FUNC -> MaterialTheme.colors.primaryVariant
-                    ButtonCategory.DIGIT -> MaterialTheme.colors.primary
-                }
+            for (button in calculatorButtons) {
                 val hapticFeedback = LocalHapticFeedback.current
                 SiliconeButton(
                     modifier = Modifier
                         .span(
-                            columns = widthRatio,
+                            columns = button.widthRatio,
                             rows = 1,
                         )
                         .padding(spaceBetweenButtons),
-                    lightColor = buttonColor,
+                    lightColor = button.color,
                     onClick = {
                         onButtonClick(button)
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -220,7 +223,7 @@ private fun NumberPad(
                 ) {
                     Text(
                         text = button.symbol,
-                        color = contentColorFor(backgroundColor = buttonColor),
+                        color = contentColorFor(backgroundColor = button.color),
                         style = MaterialTheme.typography.button.copy(
                             fontSize = with(LocalDensity.current) {
                                 (maxHeight * 0.33f).toSp()
@@ -238,12 +241,12 @@ private fun NumberPad(
 val constraintSet = ConstraintSet {
     val topBarRef = createRefFor("top_bar")
     val display = createRefFor("display")
-    val numberPad = createRefFor("number_pad")
+    val keyLayout = createRefFor("key_layout")
 
     val topGuideline1 = createGuidelineFromTop(0.01f)
     val topGuideline9 = createGuidelineFromTop(0.09f)
     val topGuideline40 = createGuidelineFromTop(0.4f)
-    val bottomGuideline3 = createGuidelineFromBottom(0.03f)
+    val bottomGuideline3 = createGuidelineFromBottom(0.02f)
 
     constrain(topBarRef) {
         linkTo(
@@ -258,13 +261,13 @@ val constraintSet = ConstraintSet {
         height = Dimension.fillToConstraints
     }
     constrain(display) {
-        bottom.linkTo(numberPad.top, margin = 16.dp)
+        bottom.linkTo(keyLayout.top, margin = 16.dp)
         end.linkTo(parent.end)
 
         width = Dimension.wrapContent
         height = Dimension.fillToConstraints
     }
-    constrain(numberPad) {
+    constrain(keyLayout) {
         linkTo(
             top = topGuideline40,
             start = parent.start,
@@ -278,40 +281,30 @@ val constraintSet = ConstraintSet {
     }
 }
 
-private const val BUTTON_LAYOUT_COLUMNS_COUNT = 4
-
 @Stable
-object CalculatorState {
-    private val buttonsRowList = calculatorActionsList.chunked(BUTTON_LAYOUT_COLUMNS_COUNT)
+object NumberPadState {
 
-    val buttonsCharacteristic
-        get() = calculatorActionsList.map {
-            Triple(it, buttonCategory(it), buttonWidthRatio(it))
-        }
-
-    val buttonsLayoutAspectRation = BUTTON_LAYOUT_COLUMNS_COUNT.toFloat() / buttonsRowList.size
+    const val BUTTONS_LAYOUT_COLUMNS_COUNT = 4
+    const val BUTTONS_LAYOUT_ROW_COUNT = 5
 
     fun calculateButtonSpacing(buttonWidth: Dp): Dp {
         return buttonWidth * 0.04f
     }
 
-    private fun buttonWidthRatio(button: CalculatorAction): Int {
-        return if (button == CalculatorAction.Digit(0)) 2 else 1
-    }
+    val CalculatorButton.widthRatio: Int
+        get() = if (this == Digit('0')) 2 else 1
 
-    private fun buttonCategory(button: CalculatorAction): ButtonCategory {
-        return when (button) {
-            in buttonsRowList.map(List<CalculatorAction>::last) -> ButtonCategory.OPERATOR
-            in buttonsRowList.first() -> ButtonCategory.FUNC
-            else -> ButtonCategory.DIGIT
+    val CalculatorButton.color
+        @Composable
+        get() = when (this) {
+            in listOf(Div, Mul, Sub, Add, Equals) -> MaterialTheme.colors.secondary
+            in listOf(AllClear, NumSign, Percent) -> MaterialTheme.colors.primaryVariant
+            else -> MaterialTheme.colors.primary
         }
-    }
 }
 
-enum class ButtonCategory { DIGIT, OPERATOR, FUNC }
-
 @Composable
-fun rememberCalculatorState() = remember { CalculatorState }
+fun rememberNumberPadState() = remember { NumberPadState }
 
 @ExperimentalMaterialApi
 @Preview(
@@ -329,12 +322,12 @@ fun CalculatorScreenPreview() {
         Surface(color = MaterialTheme.colors.background) {
             CalculatorScreen(
                 uiState = CalculatorUiState(
-                    Computation(
+                    Calculation(
                         expression = "4,900 + 15,910",
                         result = "20,810"
                     )
                 ),
-                onNumPadButtonClick = { },
+                onCalculatorButtonClick = { },
                 onHistoryNav = { },
                 onThemeToggle = { }
             )

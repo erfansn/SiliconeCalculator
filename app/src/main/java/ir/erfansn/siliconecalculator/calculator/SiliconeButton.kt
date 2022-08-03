@@ -5,7 +5,10 @@ package ir.erfansn.siliconecalculator.calculator
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -14,7 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.*
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -38,7 +41,7 @@ fun SiliconeButton(
     ),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: () -> Unit,
-    content: @Composable BoxWithConstraintsScope.() -> Unit
+    content: @Composable BoxWithConstraintsScope.() -> Unit,
 ) {
     check(borderWidthPercent in 0..100) { "The border width percent should be in the range of [0, 100]" }
 
@@ -51,7 +54,8 @@ fun SiliconeButton(
         shape = shape,
         color = colors.backgroundColor(true).value,
         contentColor = contentColor.copy(alpha = 1f),
-        elevation = elevation.elevation(enabled = true, interactionSource = interactionSource).value,
+        elevation = elevation.elevation(enabled = true,
+            interactionSource = interactionSource).value,
         interactionSource = interactionSource,
     ) {
         CompositionLocalProvider(LocalContentAlpha provides contentColor.alpha) {
@@ -78,7 +82,8 @@ fun SiliconeButton(
                                         .apply {
                                             isAntiAlias = true
                                             style = android.graphics.Paint.Style.STROKE
-                                            strokeWidth = size.minDimension * (borderWidthPercent.coerceIn(0..100) / 100.0f)
+                                            strokeWidth =
+                                                size.minDimension * (borderWidthPercent / 100.0f)
                                             shader = LinearGradientShader(
                                                 from = Offset.Zero,
                                                 to = Offset(x = size.width, y = size.height),
@@ -89,7 +94,8 @@ fun SiliconeButton(
                                                     BlurMaskFilter.Blur.NORMAL)
                                         }
 
-                                    when (val outline = shape.createOutline(size, layoutDirection, this)) {
+                                    when (val outline =
+                                        shape.createOutline(size, layoutDirection, this)) {
                                         is Outline.Rectangle -> {
                                             val rect = outline.rect
                                             it.nativeCanvas.drawRect(
