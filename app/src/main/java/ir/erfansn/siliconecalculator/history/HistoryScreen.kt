@@ -8,10 +8,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
@@ -27,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -38,7 +36,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import ir.erfansn.siliconecalculator.R
-import ir.erfansn.siliconecalculator.data.model.Computation
+import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.model.HistoryItem
 import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatButton
@@ -53,7 +51,7 @@ fun HistoryScreen(
     uiState: HistoryUiState,
     onBackPress: () -> Unit,
     onHistoryClear: () -> Unit,
-    onComputationSelect: (Computation) -> Unit,
+    onCalculationClick: (Calculation) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val clearHistoryBottomSheetState = rememberModalBottomSheetState(
@@ -99,9 +97,9 @@ fun HistoryScreen(
                 onBackPress = onBackPress,
                 onHistoryClear = { coroutineScope.launch { clearHistoryBottomSheetState.show() } }
             )
-            HistoryList(
+            HistoryItemsList(
                 historyItems = uiState.historyItems,
-                onComputationSelect = onComputationSelect
+                onCalculationClick = onCalculationClick
             )
         }
     }
@@ -110,7 +108,7 @@ fun HistoryScreen(
 @Composable
 fun ColumnScope.ClearHistoryBottomSheetContent(
     onCancelClick: () -> Unit,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
 ) {
     Spacer(modifier = Modifier.height(28.dp))
 
@@ -120,11 +118,11 @@ fun ColumnScope.ClearHistoryBottomSheetContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Clear",
-            style = MaterialTheme.typography.h6
+            text = stringResource(R.string.clear),
+            style = MaterialTheme.typography.h6,
         )
         Text(
-            text = "Clear history now?",
+            text = stringResource(R.string.clear_history_now),
             style = MaterialTheme.typography.body1
         )
     }
@@ -142,14 +140,14 @@ fun ColumnScope.ClearHistoryBottomSheetContent(
             modifier = Modifier.aspectRatio(2.5f),
             onClick = onCancelClick
         ) {
-            Text(text = "Cancel")
+            Text(text = stringResource(R.string.cancel))
         }
 
         CorneredFlatButton(
             modifier = Modifier.aspectRatio(2.5f),
             onClick = onClearClick
         ) {
-            Text(text = "Clear")
+            Text(text = stringResource(R.string.clear))
         }
     }
 
@@ -186,19 +184,19 @@ fun HistoryTopBar(
 }
 
 @Composable
-fun HistoryList(
+fun HistoryItemsList(
     historyItems: List<HistoryItem>,
-    onComputationSelect: (Computation) -> Unit,
+    onCalculationClick: (Calculation) -> Unit,
 ) {
     val historyItemsByDate = remember(historyItems) {
         historyItems.groupBy(
             keySelector = HistoryItem::date,
-            valueTransform = HistoryItem::computation
+            valueTransform = HistoryItem::calculation
         )
     }
 
     Box(
-        modifier = Modifier.layoutId("history_items"),
+        modifier = Modifier.layoutId("history_list"),
     ) {
         if (historyItemsByDate.isEmpty()) {
             Text(
@@ -206,19 +204,18 @@ fun HistoryList(
                 text = stringResource(R.string.nothing_to_show)
             )
         } else {
-            val historyItemsList = stringResource(R.string.history_items_list)
             LazyColumn(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .semantics { contentDescription = historyItemsList },
+                    .testTag("history:items"),
                 state = rememberLazyListState(
-                    initialFirstVisibleItemIndex = historyItems.size + historyItemsByDate.size
+                    initialFirstVisibleItemIndex = historyItemsByDate.size * 2
                 ),
             ) {
-                historyItemsByDate.onEachIndexed { index, (date, computations) ->
+                historyItemsByDate.onEachIndexed { index, (date, calculations) ->
                     historyItem(
-                        computations = computations,
-                        onComputationSelect = onComputationSelect,
+                        calculations = calculations,
+                        onCalculationSelect = onCalculationClick,
                         date = date,
                         isLastItem = historyItemsByDate.size - 1 == index
                     )
@@ -229,18 +226,18 @@ fun HistoryList(
 }
 
 private fun LazyListScope.historyItem(
-    computations: List<Computation>,
-    onComputationSelect: (Computation) -> Unit,
+    calculations: List<Calculation>,
+    onCalculationSelect: (Calculation) -> Unit,
     date: String,
     isLastItem: Boolean,
 ) {
-    items(computations) { computation ->
-        ComputationItem(
+    items(calculations) { calculation ->
+        CalculationItem(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onComputationSelect(computation) }
+                .clickable { onCalculationSelect(calculation) }
                 .padding(vertical = 8.dp),
-            computation = computation,
+            calculation = calculation,
         )
     }
     item {
@@ -264,10 +261,10 @@ private fun LazyListScope.historyItem(
 }
 
 @Composable
-fun ComputationItem(
+fun CalculationItem(
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.h5,
-    computation: Computation,
+    calculation: Calculation,
 ) {
     Column(
         modifier = modifier,
@@ -278,7 +275,7 @@ fun ComputationItem(
                 .alpha(ContentAlpha.medium)
                 .horizontalScroll(rememberScrollState(), reverseScrolling = true)
                 .padding(horizontal = 16.dp),
-            text = computation.expression.formatNumbers(),
+            text = calculation.expression.formatNumbers(),
             style = textStyle.copy(
                 fontWeight = FontWeight.Light
             )
@@ -287,7 +284,7 @@ fun ComputationItem(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState(), reverseScrolling = true)
                 .padding(horizontal = 16.dp),
-            text = computation.result.formatNumbers(),
+            text = calculation.result.formatNumbers(),
             style = textStyle,
         )
     }
@@ -295,7 +292,7 @@ fun ComputationItem(
 
 val constraintSet = ConstraintSet {
     val topBarRef = createRefFor("top_bar")
-    val historyItems = createRefFor("history_items")
+    val historyList = createRefFor("history_list")
 
     val topGuideline1 = createGuidelineFromTop(0.01f)
     val topGuideline9 = createGuidelineFromTop(0.09f)
@@ -313,7 +310,7 @@ val constraintSet = ConstraintSet {
         width = Dimension.fillToConstraints
         height = Dimension.fillToConstraints
     }
-    constrain(historyItems) {
+    constrain(historyList) {
         linkTo(
             top = topGuideline10,
             start = parent.start,
@@ -339,13 +336,13 @@ val constraintSet = ConstraintSet {
 fun HistoryScreenWithItemsPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
-            val computations = mutableListOf(*previewHistoryItems.toTypedArray())
+            val calculations = previewHistoryItems.toMutableList()
 
             HistoryScreen(
-                uiState = HistoryUiState(computations),
+                uiState = HistoryUiState(calculations),
                 onBackPress = { },
-                onHistoryClear = { computations.clear() },
-                onComputationSelect = { }
+                onHistoryClear = { calculations.clear() },
+                onCalculationClick = { }
             )
         }
     }

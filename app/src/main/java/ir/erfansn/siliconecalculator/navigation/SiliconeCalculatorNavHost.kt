@@ -37,7 +37,7 @@ fun SiliconeCalculatorNavHost(
                 uiState = uiState,
                 onCalculatorButtonClick = {
                     calculatorViewModel.performCalculatorButton(it)
-                    if (it == Equals) calculatorViewModel.saveComputationInHistory()
+                    if (it == Equals) calculatorViewModel.saveCalculationInHistory()
                 },
                 onHistoryNav = navActions::navigateToHistory,
                 onThemeToggle = onThemeToggle

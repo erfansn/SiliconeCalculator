@@ -8,6 +8,8 @@
     <string name="selection_container_result">Selection container of result</string>
     <string name="back_to_calculator">Back to calculator</string>
     <string name="clear_history">Clear history</string>
-    <string name="history_items_list">History items list</string>
     <string name="nothing_to_show">Nothing to show!</string>
+    <string name="clear">Clear</string>
+    <string name="clear_history_now">Clear history now?</string>
+    <string name="cancel">Cancel</string>
 </resources>

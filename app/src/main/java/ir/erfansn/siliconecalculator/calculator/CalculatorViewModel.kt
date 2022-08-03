@@ -20,12 +20,12 @@ class CalculatorViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
 ) : ViewModel() {
 
-    private var _computation = MutableStateFlow(Computation())
-    private val currentComputation get() = _computation.value
+    private var _calculation = MutableStateFlow(Calculation())
+    private val currentCalculation get() = _calculation.value
 
-    private var previousExpression = currentComputation.expression
+    private var previousExpression = currentCalculation.expression
 
-    val uiState = _computation
+    val uiState = _calculation
         .map(::CalculatorUiState)
         .stateIn(
             scope = viewModelScope,
@@ -43,7 +43,7 @@ class CalculatorViewModel @Inject constructor(
     private fun updateCalculatorDisplay(expression: String?, result: String?) {
         if (expression == null || result == null) return
 
-        _computation.update {
+        _calculation.update {
             it.copy(expression = expression, result = result)
         }
 
@@ -51,32 +51,23 @@ class CalculatorViewModel @Inject constructor(
     }
 
     fun performCalculatorButton(calculatorButton: CalculatorButton) {
-        if (currentComputation.resultIsInvalid && calculatorButton != AllClear) return
+        if (currentCalculation.resultIsInvalid && calculatorButton != AllClear) return
 
-        _computation.update {
+        _calculation.update {
             with(calculatorButton) { it.perform() }
         }
     }
 
-    fun saveComputationInHistory() = with(currentComputation) {
+    fun saveCalculationInHistory() = with(currentCalculation) {
         if (isNotEvaluated || resultIsInvalid) return
 
         viewModelScope.launch {
-            historyRepository.saveComputation(computation = this@with)
+            historyRepository.saveCalculation(calculation = this@with)
         }
 
         previousExpression = expression
     }
 
-    private val Computation.isNotEvaluated
+    private val Calculation.isNotEvaluated
         get() = expression.endsWith(lastOperator) || expression.isEmpty() || expression == previousExpression
-
-    private val Computation.resultIsInvalid: Boolean
-        get() = result.matches("-?Infinity|NaN".toRegex())
-
-    private val Computation.lastOperator
-        get() = operators.lastOrNull()?.value ?: "$"
-
-    private val Computation.operators
-        get() = "\\s$OPERATORS_REGEX\\s".toRegex().findAll(expression)
 }

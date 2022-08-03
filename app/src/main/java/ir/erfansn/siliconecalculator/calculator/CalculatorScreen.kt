@@ -77,8 +77,8 @@ fun CalculatorScreen(
         )
         CalculatorContent(
             onCalculatorButtonClick = onCalculatorButtonClick,
-            mathExpression = uiState.computation.expression,
-            evaluationResult = uiState.computation.result
+            mathExpression = uiState.calculation.expression,
+            evaluationResult = uiState.calculation.result
         )
     }
 }

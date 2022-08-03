@@ -10,19 +10,19 @@ import ir.erfansn.siliconecalculator.calculator.button.operator.Add
 import ir.erfansn.siliconecalculator.calculator.button.operator.Div
 import ir.erfansn.siliconecalculator.calculator.button.operator.Mul
 import ir.erfansn.siliconecalculator.calculator.button.operator.Sub
-import ir.erfansn.siliconecalculator.data.model.Computation
+import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.util.Evaluator
 
 abstract class CalculatorButton(val symbol: String) {
     open val applier = { n: String -> "$n $symbol " }
-    abstract fun Computation.perform(): Computation
+    abstract fun Calculation.perform(): Calculation
 }
 
 open class FunctionButton(symbol: String) : CalculatorButton(symbol) {
 
     protected val evaluator = Evaluator()
 
-    override fun Computation.perform(): Computation {
+    override fun Calculation.perform(): Calculation {
         if (result == "0") return this
 
         evaluator.expression = applier(result)
@@ -33,7 +33,7 @@ open class FunctionButton(symbol: String) : CalculatorButton(symbol) {
 
 open class OperatorButton(symbol: String) : CalculatorButton(symbol) {
 
-    override fun Computation.perform(): Computation {
+    override fun Calculation.perform(): Calculation {
         if (expression.isEmpty() && result == "0") return this
 
         val amendedExpression = when {
@@ -47,12 +47,6 @@ open class OperatorButton(symbol: String) : CalculatorButton(symbol) {
             result = "0"
         )
     }
-
-    private val Computation.lastOperator
-        get() = operators.lastOrNull()?.value ?: "$"
-
-    private val Computation.operators
-        get() = "\\s$OPERATORS_REGEX\\s".toRegex().findAll(expression)
 }
 
 val calculatorButtons = listOf(

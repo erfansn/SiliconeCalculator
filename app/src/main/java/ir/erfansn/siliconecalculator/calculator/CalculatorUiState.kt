@@ -1,9 +1,9 @@
 package ir.erfansn.siliconecalculator.calculator
 
 import androidx.compose.runtime.Immutable
-import ir.erfansn.siliconecalculator.data.model.Computation
+import ir.erfansn.siliconecalculator.data.model.Calculation
 
 @Immutable
 data class CalculatorUiState(
-    val computation: Computation = Computation()
+    val calculation: Calculation = Calculation()
 )

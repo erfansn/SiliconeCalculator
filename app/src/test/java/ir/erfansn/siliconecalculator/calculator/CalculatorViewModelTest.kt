@@ -59,7 +59,7 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Digit('0'))
             viewModel.performCalculatorButton(Digit('0'))
 
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("0")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -73,7 +73,7 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Digit('0'))
             viewModel.performCalculatorButton(Digit('0'))
 
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("1200")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("1200")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -86,7 +86,7 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Decimal)
             viewModel.performCalculatorButton(Decimal)
 
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("0.")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("0.")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -99,7 +99,7 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Digit('0'))
             viewModel.performCalculatorButton(Digit('0'))
 
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("0.00")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("0.00")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -111,10 +111,10 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Digit('1'))
             viewModel.performCalculatorButton(Digit('2'))
             viewModel.performCalculatorButton(NumSign)
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("-12.0")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("-12.0")
 
             viewModel.performCalculatorButton(NumSign)
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("12.0")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("12.0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -127,7 +127,7 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Digit('2'))
             viewModel.performCalculatorButton(Percent)
 
-            assertThat(expectMostRecentItem().computation.result).isEqualTo("0.12")
+            assertThat(expectMostRecentItem().calculation.result).isEqualTo("0.12")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -142,8 +142,8 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Div)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("")
-            assertThat(uiState.computation.result).isEqualTo("0")
+            assertThat(uiState.calculation.expression).isEqualTo("")
+            assertThat(uiState.calculation.result).isEqualTo("0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -155,7 +155,7 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Digit('1'))
             viewModel.performCalculatorButton(Add)
 
-            assertThat(expectMostRecentItem().computation.expression).isEqualTo("1 + ")
+            assertThat(expectMostRecentItem().calculation.expression).isEqualTo("1 + ")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -167,10 +167,10 @@ class CalculatorViewModelTest {
             viewModel.uiState.test {
                 viewModel.performCalculatorButton(Digit('1'))
                 viewModel.performCalculatorButton(Add)
-                assertThat(expectMostRecentItem().computation.expression).isEqualTo("1 + ")
+                assertThat(expectMostRecentItem().calculation.expression).isEqualTo("1 + ")
 
                 viewModel.performCalculatorButton(Mul)
-                assertThat(expectMostRecentItem().computation.expression).isEqualTo("1 × ")
+                assertThat(expectMostRecentItem().calculation.expression).isEqualTo("1 × ")
 
                 cancelAndIgnoreRemainingEvents()
             }
@@ -184,8 +184,8 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Equals)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("1 ÷ ")
-            assertThat(uiState.computation.result).isEqualTo("0")
+            assertThat(uiState.calculation.expression).isEqualTo("1 ÷ ")
+            assertThat(uiState.calculation.result).isEqualTo("0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -200,8 +200,8 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Equals)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("1 + 2")
-            assertThat(uiState.computation.result).isEqualTo("3.0")
+            assertThat(uiState.calculation.expression).isEqualTo("1 + 2")
+            assertThat(uiState.calculation.result).isEqualTo("3.0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -217,8 +217,8 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Equals)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("1 + 2")
-            assertThat(uiState.computation.result).isEqualTo("3.0")
+            assertThat(uiState.calculation.expression).isEqualTo("1 + 2")
+            assertThat(uiState.calculation.result).isEqualTo("3.0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -235,8 +235,8 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Equals)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("1 + 2")
-            assertThat(uiState.computation.result).isEqualTo("3.09")
+            assertThat(uiState.calculation.expression).isEqualTo("1 + 2")
+            assertThat(uiState.calculation.result).isEqualTo("3.09")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -251,13 +251,13 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Mul)
 
             var uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("1 + 2 × ")
+            assertThat(uiState.calculation.expression).isEqualTo("1 + 2 × ")
 
             viewModel.performCalculatorButton(Equals)
 
             uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("1 + 2")
-            assertThat(uiState.computation.result).isEqualTo("3.0")
+            assertThat(uiState.calculation.expression).isEqualTo("1 + 2")
+            assertThat(uiState.calculation.result).isEqualTo("3.0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -273,8 +273,8 @@ class CalculatorViewModelTest {
             viewModel.performCalculatorButton(Sub)
 
             val uiState = expectMostRecentItem()
-            assertThat(uiState.computation.expression).isEqualTo("3.0 - ")
-            assertThat(uiState.computation.result).isEqualTo("0")
+            assertThat(uiState.calculation.expression).isEqualTo("3.0 - ")
+            assertThat(uiState.calculation.result).isEqualTo("0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -291,20 +291,20 @@ class CalculatorViewModelTest {
                 calculatorButtons.filterNot { it == AllClear }.forEach(viewModel::performCalculatorButton)
 
                 var uiState = expectMostRecentItem()
-                assertThat(uiState.computation.result).doesNotContainMatch(DECIMAL_REGEX)
+                assertThat(uiState.calculation.result).doesNotContainMatch(DECIMAL_REGEX)
 
                 viewModel.performCalculatorButton(AllClear)
 
                 uiState = expectMostRecentItem()
-                assertThat(uiState.computation.expression).isEqualTo("")
-                assertThat(uiState.computation.result).isEqualTo("0")
+                assertThat(uiState.calculation.expression).isEqualTo("")
+                assertThat(uiState.calculation.result).isEqualTo("0")
 
                 cancelAndIgnoreRemainingEvents()
             }
         }
 
     @Test
-    fun `Save computation only one time in history when result was neither 'NaN' or 'Infinity'`() {
+    fun `Save calculation only one time in history when result was neither 'NaN' or 'Infinity'`() {
         viewModel.performCalculatorButton(Digit('1'))
         viewModel.performCalculatorButton(Add)
         viewModel.performCalculatorButton(Digit('2'))
@@ -318,27 +318,27 @@ class CalculatorViewModelTest {
     }
 
     @Test
-    fun `Does not save computation when result wasn't finite`() {
+    fun `Does not save calculation when result wasn't finite`() {
         viewModel.performCalculatorButton(Digit('1'))
         viewModel.performCalculatorButton(Div)
         viewModel.performCalculatorButton(Decimal)
         viewModel.performCalculatorButton(Digit('0'))
         viewModel.performCalculatorButton(Equals)
 
-        viewModel.saveComputationInHistory()
+        viewModel.saveCalculationInHistory()
 
-        coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
+        coVerify(exactly = 0) { historyRepository.saveCalculation(any()) }
         confirmVerified(historyRepository)
     }
 
     @Test
-    fun `Does not save again computation when that retrieved`() {
+    fun `Does not save again calculation when that retrieved`() {
         every { savedStateHandle.get<String>(EXPRESSION_ARG) } returns "1 + 3 - 6"
         every { savedStateHandle.get<String>(RESULT_ARG) } returns "-2.0"
 
-        viewModel.saveComputationInHistory()
+        viewModel.saveCalculationInHistory()
 
-        coVerify(exactly = 0) { historyRepository.saveComputation(any()) }
+        coVerify(exactly = 0) { historyRepository.saveCalculation(any()) }
         confirmVerified(historyRepository)
     }
 }
