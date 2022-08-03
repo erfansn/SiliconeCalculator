@@ -15,14 +15,10 @@ class Evaluator {
 
     private fun String.amendExpression(): String {
         return replace(
-            regex = """(\d*)\.(\d*)""".toRegex(),
+            regex = """(\d+)\.(\d*)""".toRegex(),
         ) { result ->
             val (integer, fraction) = result.destructured
-            when {
-                integer.isEmpty() -> "0.$fraction"
-                fraction.isEmpty() -> "$integer.0"
-                else -> "$integer.$fraction"
-            }
+            "$integer.${fraction.ifEmpty { "0" }}"
         }
     }
 }
