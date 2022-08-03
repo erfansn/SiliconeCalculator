@@ -3,7 +3,7 @@ package ir.erfansn.siliconecalculator.data.model
 import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
 import ir.erfansn.siliconecalculator.util.OPERATORS_REGEX
 
-data class HistoryItem(
+data class History(
     val id: Int,
     val date: String,
     val calculation: Calculation,
@@ -32,7 +32,7 @@ fun Calculation.asHistoryEntity() = HistoryEntity(
 )
 
 val previewHistoryItems = listOf(
-    HistoryItem(
+    History(
         id = 0,
         date = "12 April",
         calculation = Calculation(
@@ -40,7 +40,7 @@ val previewHistoryItems = listOf(
             result = "10"
         )
     ),
-    HistoryItem(
+    History(
         id = 1,
         date = "12 April",
         calculation = Calculation(
@@ -48,7 +48,7 @@ val previewHistoryItems = listOf(
             result = "2675.09"
         )
     ),
-    HistoryItem(
+    History(
         id = 2,
         date = "15 March",
         calculation = Calculation(
@@ -56,7 +56,7 @@ val previewHistoryItems = listOf(
             result = "0.002"
         )
     ),
-    HistoryItem(
+    History(
         id = 3,
         date = "15 April",
         calculation = Calculation(
@@ -64,7 +64,7 @@ val previewHistoryItems = listOf(
             result = "4755.2"
         )
     ),
-    HistoryItem(
+    History(
         id = 4,
         date = "19 April",
         calculation = Calculation(
@@ -72,7 +72,7 @@ val previewHistoryItems = listOf(
             result = "12345"
         )
     ),
-    HistoryItem(
+    History(
         id = 5,
         date = "19 April",
         calculation = Calculation(
@@ -80,7 +80,7 @@ val previewHistoryItems = listOf(
             result = "14795"
         )
     ),
-    HistoryItem(
+    History(
         id = 6,
         date = "19 April",
         calculation = Calculation(
@@ -88,7 +88,7 @@ val previewHistoryItems = listOf(
             result = "25874333"
         )
     ),
-    HistoryItem(
+    History(
         id = 7,
         date = "Yesterday",
         calculation = Calculation(
@@ -96,7 +96,7 @@ val previewHistoryItems = listOf(
             result = "234555"
         )
     ),
-    HistoryItem(
+    History(
         id = 8,
         date = "Yesterday",
         calculation = Calculation(
@@ -104,7 +104,7 @@ val previewHistoryItems = listOf(
             result = "56776"
         )
     ),
-    HistoryItem(
+    History(
         id = 9,
         date = "Yesterday",
         calculation = Calculation(
@@ -112,7 +112,7 @@ val previewHistoryItems = listOf(
             result = "2"
         )
     ),
-    HistoryItem(
+    History(
         id = 10,
         date = "Today",
         calculation = Calculation(

@@ -1,14 +1,16 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@file:OptIn(ExperimentalMaterialApi::class)
 
 package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
@@ -26,8 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +37,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Calculation
-import ir.erfansn.siliconecalculator.data.model.HistoryItem
+import ir.erfansn.siliconecalculator.data.model.History
 import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatButton
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
@@ -133,7 +133,8 @@ fun ColumnScope.ClearHistoryBottomSheetContent(
         modifier = Modifier
             .wrapContentWidth()
             .height(48.dp)
-            .align(CenterHorizontally),
+            .align(CenterHorizontally)
+            .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         OutlinedCorneredFlatButton(
@@ -151,9 +152,7 @@ fun ColumnScope.ClearHistoryBottomSheetContent(
         }
     }
 
-    Spacer(modifier = Modifier.height(
-        16.dp + WindowInsets.safeContent.asPaddingValues().calculateBottomPadding()
-    ))
+    Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.safeContent))
 }
 
 @Composable
@@ -185,13 +184,13 @@ fun HistoryTopBar(
 
 @Composable
 fun HistoryItemsList(
-    historyItems: List<HistoryItem>,
+    historyItems: List<History>,
     onCalculationClick: (Calculation) -> Unit,
 ) {
     val historyItemsByDate = remember(historyItems) {
         historyItems.groupBy(
-            keySelector = HistoryItem::date,
-            valueTransform = HistoryItem::calculation
+            keySelector = History::date,
+            valueTransform = History::calculation
         )
     }
 

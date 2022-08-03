@@ -4,7 +4,7 @@ import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.model.asHistoryEntity
 import ir.erfansn.siliconecalculator.data.source.local.db.dao.HistoryDao
 import ir.erfansn.siliconecalculator.data.source.local.db.model.HistoryEntity
-import ir.erfansn.siliconecalculator.data.source.local.db.model.asHistoryItem
+import ir.erfansn.siliconecalculator.data.source.local.db.model.asHistory
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override val historyItemsStream = historyDao.getHistoryEntitiesStream()
         .map {
-            it.map(HistoryEntity::asHistoryItem)
+            it.map(HistoryEntity::asHistory)
         }
 
     override suspend fun clearAllHistory() {
