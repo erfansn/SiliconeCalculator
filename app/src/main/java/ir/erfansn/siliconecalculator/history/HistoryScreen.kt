@@ -4,14 +4,9 @@ package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -23,13 +18,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -43,7 +35,6 @@ import ir.erfansn.siliconecalculator.ui.component.CorneredFlatButton
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.OutlinedCorneredFlatButton
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
-import ir.erfansn.siliconecalculator.util.formatNumbers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -131,10 +122,10 @@ fun ColumnScope.ClearHistoryBottomSheetContent(
 
     Row(
         modifier = Modifier
+            .padding(bottom = 16.dp)
             .wrapContentWidth()
             .height(48.dp)
-            .align(CenterHorizontally)
-            .padding(16.dp),
+            .align(CenterHorizontally),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         OutlinedCorneredFlatButton(
@@ -212,80 +203,27 @@ fun HistoryItemsList(
                 ),
             ) {
                 historyItemsByDate.onEachIndexed { index, (date, calculations) ->
-                    historyItem(
-                        calculations = calculations,
-                        onCalculationSelect = onCalculationClick,
-                        date = date,
-                        isLastItem = historyItemsByDate.size - 1 == index
-                    )
+                    item {
+                        HistoryItem(
+                            calculations = calculations,
+                            onCalculationClick = onCalculationClick,
+                            date = date
+                        )
+                    }
+                    item {
+                        val isLastItem = remember { index == historyItemsByDate.size - 1 }
+                        if (!isLastItem) {
+                            Divider(
+                                modifier = Modifier.padding(
+                                    vertical = 8.dp,
+                                    horizontal = 16.dp
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-private fun LazyListScope.historyItem(
-    calculations: List<Calculation>,
-    onCalculationSelect: (Calculation) -> Unit,
-    date: String,
-    isLastItem: Boolean,
-) {
-    items(calculations) { calculation ->
-        CalculationItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onCalculationSelect(calculation) }
-                .padding(vertical = 8.dp),
-            calculation = calculation,
-        )
-    }
-    item {
-        Text(
-            modifier = Modifier.padding(
-                vertical = 12.dp,
-                horizontal = 28.dp
-            ),
-            text = date,
-            style = MaterialTheme.typography.subtitle1.copy(
-                fontWeight = FontWeight.Medium,
-            )
-        )
-        if (!isLastItem) {
-            Divider(modifier = Modifier.padding(
-                vertical = 8.dp,
-                horizontal = 16.dp
-            ))
-        }
-    }
-}
-
-@Composable
-fun CalculationItem(
-    modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.h5,
-    calculation: Calculation,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.End
-    ) {
-        Text(
-            modifier = Modifier
-                .alpha(ContentAlpha.medium)
-                .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-                .padding(horizontal = 16.dp),
-            text = calculation.expression.formatNumbers(),
-            style = textStyle.copy(
-                fontWeight = FontWeight.Light
-            )
-        )
-        Text(
-            modifier = Modifier
-                .horizontalScroll(rememberScrollState(), reverseScrolling = true)
-                .padding(horizontal = 16.dp),
-            text = calculation.result.formatNumbers(),
-            style = textStyle,
-        )
     }
 }
 
