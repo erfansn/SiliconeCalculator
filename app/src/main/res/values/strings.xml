@@ -3,9 +3,6 @@
 
     <string name="theme_changer">Theme changer</string>
     <string name="calculations_history">Calculations history</string>
-    <string name="mathematical_exp">Mathematical expression</string>
-    <string name="evaluation_result">Evaluation result</string>
-    <string name="selection_container_result">Selection container of result</string>
     <string name="back_to_calculator">Back to calculator</string>
     <string name="clear_history">Clear history</string>
     <string name="nothing_to_show">Nothing to show!</string>

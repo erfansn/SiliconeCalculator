@@ -136,7 +136,9 @@ fun ColumnScope.ClearHistoryBottomSheetContent(
         }
 
         CorneredFlatButton(
-            modifier = Modifier.aspectRatio(2.5f),
+            modifier = Modifier
+                .aspectRatio(2.5f)
+                .testTag("history:clear"),
             onClick = onClearClick
         ) {
             Text(text = stringResource(R.string.clear))

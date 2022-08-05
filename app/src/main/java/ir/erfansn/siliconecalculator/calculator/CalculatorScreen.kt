@@ -137,7 +137,6 @@ private fun Display(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.End
     ) {
-        val expressionContentDesc = stringResource(R.string.mathematical_exp)
         Text(
             modifier = Modifier
                 .horizontalScroll(
@@ -146,7 +145,7 @@ private fun Display(
                 )
                 .padding(horizontal = 20.dp)
                 .alpha(ContentAlpha.medium)
-                .semantics { contentDescription = expressionContentDesc },
+                .testTag("calculator:expression"),
             text = mathExpression.formatNumbers(),
             style = MaterialTheme.typography.h5.copy(
                 fontWeight = FontWeight.Light,
@@ -159,11 +158,7 @@ private fun Display(
             backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.4f)
         )
         CompositionLocalProvider(LocalTextSelectionColors provides customTextSelectionColors) {
-            val selectionContainerResult = stringResource(R.string.selection_container_result)
-            SelectionContainer(
-                modifier = Modifier.semantics { contentDescription = selectionContainerResult },
-            ) {
-                val resultContentDesc = stringResource(R.string.evaluation_result)
+            SelectionContainer {
                 Text(
                     modifier = Modifier
                         .horizontalScroll(
@@ -171,7 +166,7 @@ private fun Display(
                             reverseScrolling = true
                         )
                         .padding(horizontal = 20.dp)
-                        .semantics { contentDescription = resultContentDesc },
+                        .testTag("calculator:result"),
                     text = evaluationResult.formatNumbers(),
                     style = MaterialTheme.typography.h3.copy(
                         fontWeight = FontWeight.Normal,
@@ -214,7 +209,8 @@ private fun KeyLayout(
                             columns = button.widthRatio,
                             rows = 1,
                         )
-                        .padding(spaceBetweenButtons),
+                        .padding(spaceBetweenButtons)
+                        .testTag("calculator:${button.symbol}"),
                     lightColor = button.color,
                     onClick = {
                         onButtonClick(button)

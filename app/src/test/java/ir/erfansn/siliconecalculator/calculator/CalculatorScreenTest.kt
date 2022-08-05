@@ -1,13 +1,13 @@
 package ir.erfansn.siliconecalculator.calculator
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
-import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.repository.FakeHistoryRepository
 import org.junit.Before
 import org.junit.Rule
@@ -19,18 +19,10 @@ import org.robolectric.RobolectricTestRunner
 class CalculatorScreenTest {
 
     @get:Rule
-    val composeTestRule = createAndroidComposeRule<ComponentActivity>()
-
-    lateinit var mathematicalExp: String
-    lateinit var evaluationResult: String
+    val composeTestRule = createComposeRule()
 
     @Before
     fun setUp() {
-        composeTestRule.activity.apply {
-            mathematicalExp = getString(R.string.mathematical_exp)
-            evaluationResult = getString(R.string.evaluation_result)
-        }
-
         setContent()
     }
 
@@ -39,11 +31,11 @@ class CalculatorScreenTest {
         with(composeTestRule) {
             val nodeTexts = listOf("1", ".", "2", "+", "2", "%", "±")
             nodeTexts.forEach {
-                onNode(hasText(it) and hasClickAction()).performClick()
+                onNodeWithTag("calculator:$it").performClick()
             }
 
-            onNodeWithContentDescription(mathematicalExp).assertTextEquals("1.2 + ")
-            onNodeWithContentDescription(evaluationResult).assertTextEquals("-0.02")
+            onNodeWithTag("calculator:expression").assertTextEquals("1.2 + ")
+            onNodeWithTag("calculator:result").assertTextEquals("-0.02")
         }
     }
 

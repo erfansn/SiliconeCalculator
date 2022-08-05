@@ -1,5 +1,6 @@
 package ir.erfansn.siliconecalculator
 
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -12,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@ExperimentalComposeUiApi
 @HiltAndroidTest
 class SiliconeCalculatorTest {
 
@@ -26,7 +28,6 @@ class SiliconeCalculatorTest {
 
     private lateinit var mathematicalExp: String
     private lateinit var evaluationResult: String
-    private lateinit var themeChanger: String
     private lateinit var calculationsHistory: String
 
     @Before
@@ -34,12 +35,10 @@ class SiliconeCalculatorTest {
         hiltRule.inject()
 
         composeRule.activity.apply {
-            mathematicalExp = getString(R.string.mathematical_exp)
-            evaluationResult = getString(R.string.evaluation_result)
-
-            themeChanger = getString(R.string.theme_changer)
             calculationsHistory = getString(R.string.calculations_history)
         }
+        mathematicalExp = "calculator:expression"
+        evaluationResult = "calculator:result"
     }
 
     @Test
@@ -55,9 +54,9 @@ class SiliconeCalculatorTest {
         }
 
         with(composeRule) {
-            onNodeWithContentDescription(mathematicalExp)
+            onNodeWithTag(mathematicalExp)
                 .assertTextEquals("")
-            onNodeWithContentDescription(evaluationResult)
+            onNodeWithTag(evaluationResult)
                 .assertTextEquals("0")
 
             onNodeWithContentDescription(calculationsHistory)
@@ -67,9 +66,9 @@ class SiliconeCalculatorTest {
                 .filterToOne(hasTextExactly("1 + 1", "2"))
                 .performClick()
 
-            onNodeWithContentDescription(mathematicalExp)
+            onNodeWithTag(mathematicalExp)
                 .assertTextEquals("1 + 1")
-            onNodeWithContentDescription(evaluationResult)
+            onNodeWithTag(evaluationResult)
                 .assertTextEquals("2")
         }
     }

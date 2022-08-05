@@ -11,6 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +22,7 @@ import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorNavHost
 import ir.erfansn.siliconecalculator.ui.animation.CircularReveal
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 
+@ExperimentalComposeUiApi
 @AndroidEntryPoint
 class SiliconeCalculatorActivity : ComponentActivity() {
 
@@ -35,7 +40,10 @@ class SiliconeCalculatorActivity : ComponentActivity() {
                 animationSpec = tween(500)
             ) { isDark ->
                 SiliconeCalculatorTheme(darkTheme = isDark) {
-                    Surface(color = MaterialTheme.colors.background) {
+                    Surface(
+                        modifier = Modifier.semantics { testTagsAsResourceId = true },
+                        color = MaterialTheme.colors.background
+                    ) {
                         SiliconeCalculatorNavHost(
                             navController = navController,
                             onThemeToggle = onThemeToggle

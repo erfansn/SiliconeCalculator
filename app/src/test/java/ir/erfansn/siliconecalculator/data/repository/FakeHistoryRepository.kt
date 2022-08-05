@@ -8,7 +8,7 @@ import ir.erfansn.siliconecalculator.data.source.local.db.model.asHistory
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
-class FakeHistoryRepository @Inject constructor() : HistoryRepository {
+class FakeHistoryRepository : HistoryRepository {
 
     private val historyEntities = mutableListOf<HistoryEntity>()
 

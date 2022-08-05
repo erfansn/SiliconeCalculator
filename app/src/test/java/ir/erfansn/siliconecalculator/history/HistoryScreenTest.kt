@@ -25,7 +25,7 @@ class HistoryScreenTest {
 
     private lateinit var nothingToShow: String
     private lateinit var clearHistory: String
-    private lateinit var clear: String
+    private lateinit var historyItems: String
 
     private val fakeHistoryRepository = FakeHistoryRepository()
 
@@ -34,7 +34,7 @@ class HistoryScreenTest {
         composeTestRule.activity.apply {
             nothingToShow = getString(R.string.nothing_to_show)
             clearHistory = getString(R.string.clear_history)
-            clear = getString(R.string.clear)
+            historyItems = "history:items"
         }
     }
 
@@ -43,7 +43,7 @@ class HistoryScreenTest {
         setContent()
 
         with(composeTestRule) {
-            onNodeWithTag("history:items")
+            onNodeWithTag(historyItems)
                 .assertDoesNotExist()
 
             onNodeWithText(nothingToShow)
@@ -67,7 +67,7 @@ class HistoryScreenTest {
             onNodeWithText(nothingToShow)
                 .assertDoesNotExist()
 
-            onNodeWithTag("history:items")
+            onNodeWithTag(historyItems)
                 .assertExists()
                 .assertIsDisplayed()
         }
@@ -88,10 +88,10 @@ class HistoryScreenTest {
             onNodeWithContentDescription(clearHistory)
                 .performClick()
 
-            onNode(hasText(clear) and hasClickAction())
+            onNodeWithTag("history:clear")
                 .performClick()
 
-            onNodeWithTag("history:items")
+            onNodeWithTag(historyItems)
                 .assertDoesNotExist()
 
             onNodeWithText(nothingToShow)
