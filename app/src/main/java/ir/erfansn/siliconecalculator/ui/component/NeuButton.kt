@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterialApi::class)
 
-package ir.erfansn.siliconecalculator.calculator
+package ir.erfansn.siliconecalculator.ui.component
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.background
@@ -19,13 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.boundingRect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SiliconeButton(
+fun NeuButton(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(36),
     lightColor: Color,
@@ -75,25 +76,24 @@ fun SiliconeButton(
                             )
                         )
                         .drawWithCache {
+                            val paint = Paint()
+                                .asFrameworkPaint()
+                                .apply {
+                                    isAntiAlias = true
+                                    style = android.graphics.Paint.Style.STROKE
+                                    strokeWidth = size.minDimension * (borderWidthPercent / 100.0f)
+                                    shader = LinearGradientShader(
+                                        from = Offset.Zero,
+                                        to = Offset(x = size.width, y = size.height),
+                                        colors = listOf(darkColor, lightColor)
+                                    )
+                                    maskFilter =
+                                        BlurMaskFilter(strokeWidth / 2,
+                                            BlurMaskFilter.Blur.NORMAL)
+                                }
+
                             onDrawBehind {
                                 drawIntoCanvas {
-                                    val paint = Paint()
-                                        .asFrameworkPaint()
-                                        .apply {
-                                            isAntiAlias = true
-                                            style = android.graphics.Paint.Style.STROKE
-                                            strokeWidth =
-                                                size.minDimension * (borderWidthPercent / 100.0f)
-                                            shader = LinearGradientShader(
-                                                from = Offset.Zero,
-                                                to = Offset(x = size.width, y = size.height),
-                                                colors = listOf(darkColor, lightColor)
-                                            )
-                                            maskFilter =
-                                                BlurMaskFilter(strokeWidth / 2,
-                                                    BlurMaskFilter.Blur.NORMAL)
-                                        }
-
                                     when (val outline =
                                         shape.createOutline(size, layoutDirection, this)) {
                                         is Outline.Rectangle -> {
@@ -106,10 +106,7 @@ fun SiliconeButton(
                                         is Outline.Rounded -> {
                                             val roundRect = outline.roundRect
                                             it.nativeCanvas.drawRoundRect(
-                                                roundRect.top,
-                                                roundRect.left,
-                                                roundRect.right,
-                                                roundRect.bottom,
+                                                roundRect.boundingRect.toAndroidRectF(),
                                                 roundRect.topLeftCornerRadius.x,
                                                 roundRect.topLeftCornerRadius.y,
                                                 paint
@@ -136,9 +133,9 @@ fun SiliconeButton(
 
 @Preview(showBackground = true)
 @Composable
-fun SiliconeButtonPreview() {
+fun NeuButtonPreview() {
     MaterialTheme {
-        SiliconeButton(
+        NeuButton(
             modifier = Modifier.padding(10.dp),
             lightColor = MaterialTheme.colors.primary,
             onClick = { },

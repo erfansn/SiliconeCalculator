@@ -3,7 +3,6 @@ package ir.erfansn.siliconecalculator.calculator
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -23,8 +22,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +51,7 @@ import ir.erfansn.siliconecalculator.calculator.button.operator.Mul
 import ir.erfansn.siliconecalculator.calculator.button.operator.Sub
 import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
+import ir.erfansn.siliconecalculator.ui.component.NeuButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 import ir.erfansn.siliconecalculator.util.formatNumbers
@@ -203,7 +201,7 @@ private fun KeyLayout(
 
             for (button in calculatorButtons) {
                 val hapticFeedback = LocalHapticFeedback.current
-                SiliconeButton(
+                NeuButton(
                     modifier = Modifier
                         .span(
                             columns = button.widthRatio,
