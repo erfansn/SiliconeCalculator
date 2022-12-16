@@ -33,7 +33,7 @@ class BaselineProfileGenerator {
 
     @Test
     fun startup() =
-        baselineProfileRule.collectBaselineProfile(packageName = "ir.erfansn.siliconecalculator") {
+        baselineProfileRule.collectBaselineProfile(packageName = TARGET_PACKAGE) {
             pressHome()
             startActivityAndWait()
 
