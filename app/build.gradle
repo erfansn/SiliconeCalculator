@@ -24,6 +24,7 @@ plugins {
 
 android {
     compileSdk 33
+    namespace 'ir.erfansn.siliconecalculator'
 
     defaultConfig {
         applicationId "ir.erfansn.siliconecalculator"
