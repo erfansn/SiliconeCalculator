@@ -27,6 +27,7 @@ import dagger.hilt.components.SingletonComponent
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepositoryImpl
 import ir.erfansn.siliconecalculator.data.source.local.db.SiliconeCalculatorDatabase
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -50,5 +51,8 @@ interface AppModule {
         @Provides
         fun providesHistoryDao(siliconeCalculatorDatabase: SiliconeCalculatorDatabase) =
             siliconeCalculatorDatabase.historyDao()
+
+        @Provides
+        fun providesDefaultDispatcher() = Dispatchers.Default
     }
 }
