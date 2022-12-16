@@ -26,14 +26,17 @@ import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsArg.EXPRESSION_ARG
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsArg.RESULT_ARG
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class CalculatorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val historyRepository: HistoryRepository,
+    private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private var _calculation = MutableStateFlow(Calculation())
@@ -69,8 +72,12 @@ class CalculatorViewModel @Inject constructor(
     fun performCalculatorButton(calculatorButton: CalculatorButton) {
         if (currentCalculation.resultIsInvalid && calculatorButton != AllClear) return
 
-        _calculation.update {
-            with(calculatorButton) { it.perform() }
+        viewModelScope.launch {
+            _calculation.update {
+                withContext(defaultDispatcher) {
+                    with(calculatorButton) { it.perform() }
+                }
+            }
         }
     }
 

@@ -65,7 +65,7 @@ class CalculatorViewModelTest {
     fun setUp() {
         every { savedStateHandle.get<String?>(any()) } returns null
 
-        viewModel = CalculatorViewModel(savedStateHandle, historyRepository)
+        viewModel = CalculatorViewModel(savedStateHandle, historyRepository, mainDispatcherRule.testDispatcher)
     }
 
     @Test

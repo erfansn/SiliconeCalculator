@@ -25,6 +25,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
 import ir.erfansn.siliconecalculator.data.repository.FakeHistoryRepository
+import kotlinx.coroutines.Dispatchers
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -58,7 +59,7 @@ class CalculatorScreenTest {
     private fun setContent() {
         composeTestRule.setContent {
             val viewModel =
-                remember { CalculatorViewModel(SavedStateHandle(), FakeHistoryRepository()) }
+                remember { CalculatorViewModel(SavedStateHandle(), FakeHistoryRepository(), Dispatchers.Main.immediate) }
             val uiState by viewModel.uiState.collectAsState()
 
             CalculatorScreen(
