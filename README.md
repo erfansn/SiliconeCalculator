@@ -23,7 +23,7 @@ which I personally believe is a combination of some layers and principles of thr
 
 ## 🧪 Testing
 For this project, **unit**, **integration**, **end-to-end** tests have been written based on the pyramid test in the Android test [codelab](https://developer.android.com/codelabs/advanced-android-kotlin-training-testing-test-doubles#2), and in addition,
-a simple **benchmark** test has been written for the COLD startup app to measure the effectiveness of using the Baseline Profile.
+a **benchmark** test has been written for the app startup states to measure the effectiveness of using the Baseline Profile.
 
 ## 💯 MAD Score
 ![summary](media/summary.png)
