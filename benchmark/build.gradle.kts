@@ -15,38 +15,28 @@
  */
 
 plugins {
-    id 'com.android.test'
-    id 'org.jetbrains.kotlin.android'
+    id("com.android.test")
+    kotlin("android")
 }
 
 android {
-    compileSdk 33
-    namespace 'ir.erfansn.siliconecalculator.benchmark'
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+    compileSdk = 33
+    namespace = "ir.erfansn.siliconecalculator.benchmark"
 
     defaultConfig {
-        minSdk 23
-        targetSdk 33
+        minSdk = 23
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         // This benchmark buildType is used for benchmarking, and should function like your
         // release build (for example, with minification on). It's signed with a debug key
         // for easy local/CI testing.
-        benchmark {
-            debuggable = true
-            signingConfig = debug.signingConfig
-            matchingFallbacks = ["release"]
+        register("benchmark") {
+            isDebuggable = true
+            signingConfig = getByName("debug").signingConfig
+            matchingFallbacks += "release"
         }
     }
 
@@ -54,15 +44,19 @@ android {
     experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
-    implementation 'androidx.test.ext:junit:1.1.4'
-    implementation 'androidx.test.espresso:espresso-core:3.5.0'
-    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    implementation 'androidx.benchmark:benchmark-macro-junit4:1.1.1'
+    implementation("androidx.test.ext:junit:1.1.5")
+    implementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
+    implementation("androidx.benchmark:benchmark-macro-junit4:1.1.1")
 }
 
 androidComponents {
-    beforeVariants(selector().all()) {
-        enabled = buildType == "benchmark"
+    beforeVariants {
+        it.enable = it.buildType == "benchmark"
     }
 }
