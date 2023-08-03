@@ -33,7 +33,7 @@ android {
         versionCode = 2
         versionName = "1.0.1"
 
-        testInstrumentationRunner = "$applicationId.runner.AppTestRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

@@ -17,75 +17,62 @@
 package ir.erfansn.siliconecalculator
 
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
-import ir.erfansn.siliconecalculator.data.model.Calculation
-import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.function.Equals
+import ir.erfansn.siliconecalculator.calculator.button.operator.Add
 import org.junit.Rule
 import org.junit.Test
-import javax.inject.Inject
 
 @ExperimentalComposeUiApi
-@HiltAndroidTest
 class SiliconeCalculatorTest {
-
-    @get:Rule
-    val hiltRule = HiltAndroidRule(this)
 
     @get:Rule
     val composeRule = createAndroidComposeRule<SiliconeCalculatorActivity>()
 
-    @Inject
-    lateinit var historyRepository: HistoryRepository
-
-    private lateinit var mathematicalExp: String
-    private lateinit var evaluationResult: String
-    private lateinit var calculationsHistory: String
-
-    @Before
-    fun setUp() {
-        hiltRule.inject()
-
-        composeRule.activity.apply {
-            calculationsHistory = getString(R.string.calculations_history)
-        }
-        mathematicalExp = "calculator:expression"
-        evaluationResult = "calculator:result"
-    }
-
     @Test
     fun savedCalculation_whenRetrieveItFromHistory_showItAsCurrentCalculation() {
-        runBlocking {
-            historyRepository.clearAllHistory()
-            historyRepository.saveCalculation(
-                calculation = Calculation(
-                    expression = "1 + 1",
-                    result = "2"
-                )
-            )
-        }
-
         with(composeRule) {
-            onNodeWithTag(mathematicalExp)
+            onNodeWithContentDescription(activity.getString(R.string.calculations_history))
+                .performClick()
+            onNodeWithContentDescription(activity.getString(R.string.clear_history))
+                .performClick()
+            onNodeWithTag("history:clear")
+                .performClick()
+
+            listOf("1", "2", Add.symbol, "3", "4", Equals.symbol).forEach {
+                onNodeWithTag("calculator:$it")
+                    .performClick()
+            }
+            onNodeWithTag("calculator:expression")
+                .assertTextEquals("12 + 34")
+            onNodeWithTag("calculator:result")
+                .assertTextEquals("46.0")
+
+            onNodeWithTag("calculator:${AllClear.symbol}")
+                .performClick()
+            onNodeWithTag("calculator:expression")
                 .assertTextEquals("")
-            onNodeWithTag(evaluationResult)
+            onNodeWithTag("calculator:result")
                 .assertTextEquals("0")
 
-            onNodeWithContentDescription(calculationsHistory)
+            onNodeWithContentDescription(activity.getString(R.string.calculations_history))
                 .performClick()
             onNodeWithTag("history:items")
                 .onChildren()
-                .filterToOne(hasTextExactly("1 + 1", "2"))
+                .onFirst()
                 .performClick()
 
-            onNodeWithTag(mathematicalExp)
-                .assertTextEquals("1 + 1")
-            onNodeWithTag(evaluationResult)
-                .assertTextEquals("2")
+            onNodeWithTag("calculator:expression")
+                .assertTextEquals("12 + 34")
+            onNodeWithTag("calculator:result")
+                .assertTextEquals("46.0")
         }
     }
 }
