@@ -186,7 +186,7 @@ fun CircularRevealAnimationPreview() {
                 ) {
                     Icon(
                         modifier = Modifier.size(120.dp),
-                        imageVector = if (isDark) Icons.Default.DarkMode else Icons.Default.LightMode,
+                        imageVector = if (!darkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
                         contentDescription = "Toggle",
                     )
                 }
