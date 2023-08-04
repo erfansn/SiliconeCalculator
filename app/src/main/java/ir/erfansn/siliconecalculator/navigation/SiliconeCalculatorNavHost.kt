@@ -27,7 +27,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ir.erfansn.siliconecalculator.calculator.CalculatorScreen
 import ir.erfansn.siliconecalculator.calculator.CalculatorViewModel
-import ir.erfansn.siliconecalculator.calculator.button.function.Equals
 import ir.erfansn.siliconecalculator.history.HistoryScreen
 import ir.erfansn.siliconecalculator.history.HistoryViewModel
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinations.CALCULATOR_ROUTE
@@ -51,10 +50,7 @@ fun SiliconeCalculatorNavHost(
 
             CalculatorScreen(
                 uiState = uiState,
-                onCalculatorButtonClick = {
-                    calculatorViewModel.performCalculatorButton(it)
-                    if (it == Equals) calculatorViewModel.saveCalculationInHistory()
-                },
+                onCalculatorButtonClick = calculatorViewModel::performCalculatorButton,
                 onHistoryNav = navActions::navigateToHistory,
                 onThemeToggle = onThemeToggle
             )

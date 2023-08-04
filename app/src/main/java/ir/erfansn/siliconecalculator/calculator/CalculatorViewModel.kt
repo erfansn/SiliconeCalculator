@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.erfansn.siliconecalculator.calculator.button.CalculatorButton
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.function.Equals
 import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsArg.EXPRESSION_ARG
@@ -29,7 +30,6 @@ import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsAr
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,23 +72,23 @@ class CalculatorViewModel @Inject constructor(
     fun performCalculatorButton(calculatorButton: CalculatorButton) {
         if (currentCalculation.resultIsInvalid && calculatorButton != AllClear) return
 
-        viewModelScope.launch {
+        viewModelScope.launch(defaultDispatcher) {
             _calculation.update {
-                withContext(defaultDispatcher) {
-                    with(calculatorButton) { it.perform() }
+                with(calculatorButton) {
+                    it.perform().also {
+                        if (calculatorButton == Equals) saveCalculationInHistory(it)
+                    }
                 }
             }
         }
     }
 
-    fun saveCalculationInHistory() = with(currentCalculation) {
-        if (isNotEvaluated || resultIsInvalid) return
+    private suspend fun saveCalculationInHistory(calculation: Calculation) {
+        if (calculation.isNotEvaluated || calculation.resultIsInvalid) return
 
-        viewModelScope.launch {
-            historyRepository.saveCalculation(calculation = this@with)
-        }
+        historyRepository.saveCalculation(calculation)
 
-        previousExpression = expression
+        previousExpression = calculation.expression
     }
 
     private val Calculation.isNotEvaluated
