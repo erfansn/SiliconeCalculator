@@ -22,6 +22,10 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     compileSdk = 33
     namespace = "ir.erfansn.siliconecalculator"
@@ -74,7 +78,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += listOf("/META-INF/{AL2.0,LGPL2.1}", "DebugProbesKt.bin")
         }
     }
 
@@ -85,10 +89,6 @@ android {
     }
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
@@ -97,23 +97,19 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.profileinstaller:profileinstaller:1.3.1")
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
-    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
     implementation("com.google.dagger:hilt-android:${rootProject.extra["hilt_version"]}")
-    kapt("com.google.dagger:hilt-compiler:${rootProject.extra["hilt_version"]}")
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.0.6")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
     val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
     implementation(composeBom)
-    androidTestImplementation(composeBom)
     implementation("androidx.compose.material:material")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    debugImplementation("androidx.compose.ui:ui-tooling")
 
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
@@ -121,6 +117,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
+    testImplementation(composeBom)
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.truth:truth:1.1.3")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
@@ -129,13 +126,16 @@ dependencies {
     testImplementation("io.mockk:mockk-agent-jvm:1.13.2")
     testImplementation("org.robolectric:robolectric:4.10.3")
     testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.compose.ui:ui-test-junit4")
 
+    androidTestImplementation(composeBom)
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:${rootProject.extra["hilt_version"]}")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:${rootProject.extra["hilt_version"]}")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
-    debugImplementation("androidx.compose.ui:ui-test-junit4")
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    kapt("com.google.dagger:hilt-compiler:${rootProject.extra["hilt_version"]}")
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
