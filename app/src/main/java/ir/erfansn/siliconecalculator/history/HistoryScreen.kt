@@ -20,6 +20,7 @@ package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -73,6 +74,7 @@ fun HistoryScreen(
         }
     }
     ModalBottomSheetLayout(
+        modifier = Modifier.background(color = MaterialTheme.colors.surface.copy(alpha = 0.4f)),
         sheetBackgroundColor = MaterialTheme.colors.background,
         sheetState = clearHistoryBottomSheetState,
         sheetShape = MaterialTheme.shapes.large.copy(
@@ -169,26 +171,36 @@ fun HistoryTopBar(
     onBackPress: () -> Unit,
     onHistoryClear: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .layoutId("top_bar"),
-        horizontalArrangement = Arrangement.spacedBy(10.dp,
-            alignment = Alignment.Start)
+    Box(
+        modifier = Modifier.layoutId("top_bar"),
+        contentAlignment = Alignment.CenterStart,
     ) {
-        val baseModifier = Modifier.aspectRatio(1.25f)
-        CorneredFlatIconButton(
-            modifier = baseModifier,
-            onClick = onBackPress,
-            icon = Icons.Outlined.ArrowBack,
-            contentDescription = stringResource(R.string.back_to_calculator)
-        )
-        CorneredFlatIconButton(
-            modifier = baseModifier,
-            onClick = onHistoryClear,
-            icon = Icons.Outlined.ClearAll,
-            contentDescription = stringResource(R.string.clear_history)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f)
+                .padding(start = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 10.dp,
+                alignment = Alignment.Start
+            )
+        ) {
+            val baseModifier = Modifier.aspectRatio(1.25f)
+            CorneredFlatIconButton(
+                modifier = baseModifier,
+                onClick = onBackPress,
+                icon = Icons.Outlined.ArrowBack,
+                contentDescription = stringResource(R.string.back_to_calculator)
+            )
+            CorneredFlatIconButton(
+                modifier = baseModifier,
+                onClick = onHistoryClear,
+                icon = Icons.Outlined.ClearAll,
+                contentDescription = stringResource(R.string.clear_history)
+            )
+        }
     }
+    Spacer(modifier = Modifier.layoutId("spacer"))
 }
 
 @Composable
@@ -204,7 +216,8 @@ fun HistoryItemsList(
     }
 
     Box(
-        modifier = Modifier.layoutId("history_list"),
+        modifier = Modifier.layoutId("history_list")
+            .background(color = MaterialTheme.colors.background),
     ) {
         if (historyItemsByDate.isEmpty()) {
             Text(
@@ -219,6 +232,7 @@ fun HistoryItemsList(
                 state = rememberLazyListState(
                     initialFirstVisibleItemIndex = historyItemsByDate.size * 2
                 ),
+                contentPadding = PaddingValues(top = 8.dp)
             ) {
                 historyItemsByDate.onEachIndexed { index, (date, calculations) ->
                     item {
@@ -247,19 +261,29 @@ fun HistoryItemsList(
 
 val constraintSet = ConstraintSet {
     val topBarRef = createRefFor("top_bar")
+    val spacerRef = createRefFor("spacer")
     val historyList = createRefFor("history_list")
 
-    val topGuideline1 = createGuidelineFromTop(0.01f)
-    val topGuideline9 = createGuidelineFromTop(0.09f)
-    val topGuideline10 = createGuidelineFromTop(0.11f)
+    val topGuideline10 = createGuidelineFromTop(0.10f)
+    val topGuideline11 = createGuidelineFromTop(0.11f)
 
     constrain(topBarRef) {
         linkTo(
-            top = topGuideline1,
+            top = parent.top,
             start = parent.start,
-            bottom = topGuideline9,
+            bottom = topGuideline10,
             end = parent.end,
-            startMargin = 20.dp
+        )
+
+        width = Dimension.fillToConstraints
+        height = Dimension.fillToConstraints
+    }
+    constrain(spacerRef) {
+        linkTo(
+            top = topBarRef.bottom,
+            start = parent.start,
+            bottom = topGuideline11,
+            end = parent.end,
         )
 
         width = Dimension.fillToConstraints
@@ -267,7 +291,7 @@ val constraintSet = ConstraintSet {
     }
     constrain(historyList) {
         linkTo(
-            top = topGuideline10,
+            top = spacerRef.bottom,
             start = parent.start,
             bottom = parent.bottom,
             end = parent.end,
