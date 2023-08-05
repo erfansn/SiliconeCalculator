@@ -23,19 +23,19 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(Configs.JVM_TOOLCHAIN_VERSION)
 }
 
 android {
-    compileSdk = 33
-    namespace = "ir.erfansn.siliconecalculator"
+    compileSdk = Configs.COMPILE_SDK_VERSION
+    namespace = Configs.PACKAGE_NAME
 
     defaultConfig {
-        applicationId = "ir.erfansn.siliconecalculator"
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 2
-        versionName = "1.0.1"
+        applicationId = Configs.PACKAGE_NAME
+        minSdk = Configs.MIN_SDK_VERSION
+        targetSdk = Configs.TARGET_SDK_VERSION
+        versionCode = 3
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -56,14 +56,11 @@ android {
                 "proguard-rules.pro"
             )
         }
-        register("benchmark") {
+        benchmark {
+            initWith(getByName("release"))
             signingConfig = getByName("debug").signingConfig
             matchingFallbacks += "release"
-            isDebuggable = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "benchmark-rules.pro"
-            )
+            proguardFiles("benchmark-rules.pro")
         }
     }
     compileOptions {

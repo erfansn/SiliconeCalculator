@@ -19,12 +19,17 @@ plugins {
     kotlin("android")
 }
 
+kotlin {
+    jvmToolchain(Configs.JVM_TOOLCHAIN_VERSION)
+}
+
 android {
-    compileSdk = 33
-    namespace = "ir.erfansn.siliconecalculator.benchmark"
+    compileSdk = Configs.COMPILE_SDK_VERSION
+    namespace = "${Configs.PACKAGE_NAME}.benchmark"
 
     defaultConfig {
-        minSdk = 23
+        minSdk = Configs.MIN_SDK_VERSION.coerceAtLeast(23)
+        targetSdk = Configs.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,10 +38,9 @@ android {
         // This benchmark buildType is used for benchmarking, and should function like your
         // release build (for example, with minification on). It's signed with a debug key
         // for easy local/CI testing.
-        register("benchmark") {
-            isDebuggable = true
+        benchmark {
             signingConfig = getByName("debug").signingConfig
-            matchingFallbacks += "release"
+            isDebuggable = true
         }
     }
 
@@ -44,13 +48,10 @@ android {
     experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
 dependencies {
+    implementation("androidx.test:core-ktx:1.5.0")
+    implementation("androidx.test:runner:1.5.2")
     implementation("androidx.test.ext:junit:1.1.5")
-    implementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.test.uiautomator:uiautomator:2.2.0")
     implementation("androidx.benchmark:benchmark-macro-junit4:1.1.1")
 }
