@@ -29,5 +29,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Silicone Calculator"
-include ':app'
-include ':benchmark'
+include(":app")
+include(":benchmark")
