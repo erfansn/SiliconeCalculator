@@ -98,7 +98,7 @@ dependencies {
 
     implementation("com.google.dagger:hilt-android:${rootProject.extra["hilt_version"]}")
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
