@@ -100,7 +100,7 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 
     val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
     implementation(composeBom)
