@@ -1,7 +1,7 @@
 [versions]
 accompanistSystemuicontrollerVersion = "0.30.1"
 activityComposeVersion = "1.7.2"
-agpVersion = "8.4.0"
+agpVersion = "8.4.1"
 benchmarkMacroJunit4Version = "1.1.1"
 constraintlayoutComposeVersion = "1.0.1"
 coreKtx = "1.5.0"
