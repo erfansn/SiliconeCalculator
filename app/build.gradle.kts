@@ -15,11 +15,11 @@
  */
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger.hilt)
     id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 kotlin {
@@ -58,7 +58,7 @@ android {
         }
         benchmark {
             initWith(getByName("release"))
-            signingConfig = getByName("debug").signingConfig
+            signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += "release"
             proguardFiles("benchmark-rules.pro")
         }
@@ -71,7 +71,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = rootProject.extra["compose_compiler_version"].toString()
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
@@ -87,53 +87,53 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.profileinstaller:profileinstaller:1.3.1")
-    implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
-    implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.profileinstaller)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
 
-    implementation("com.google.dagger:hilt-android:${rootProject.extra["hilt_version"]}")
+    implementation(libs.hilt.android)
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
-    implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.mathparser.org.mxparser)
+    implementation(libs.kotlinx.datetime)
 
-    val composeBom = platform("androidx.compose:compose-bom:2023.06.01")
+    val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
-    implementation("androidx.compose.material:material")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(libs.material)
+    implementation(libs.material.icons.extended)
+    implementation(libs.ui.tooling.preview)
 
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("androidx.navigation:navigation-compose:2.6.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation(libs.activity.compose)
+    implementation(libs.constraintlayout.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
 
     testImplementation(composeBom)
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("com.google.truth:truth:1.1.3")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("app.cash.turbine:turbine:1.0.0")
-    testImplementation("io.mockk:mockk:1.13.2")
-    testImplementation("io.mockk:mockk-agent-jvm:1.13.2")
-    testImplementation("org.robolectric:robolectric:4.10.3")
-    testImplementation("androidx.test.ext:junit:1.1.5")
-    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.agent.jvm)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.ext.junit)
+    testImplementation(libs.ui.test.junit4)
 
     androidTestImplementation(composeBom)
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
 
-    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
-    kapt("com.google.dagger:hilt-compiler:${rootProject.extra["hilt_version"]}")
+    ksp(libs.room.compiler)
+    kapt(libs.hilt.compiler)
 
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }
 
 kapt {

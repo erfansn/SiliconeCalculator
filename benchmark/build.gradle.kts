@@ -15,8 +15,8 @@
  */
 
 plugins {
-    id("com.android.test")
-    kotlin("android")
+    alias(libs.plugins.android.test)
+    alias(libs.plugins.kotlin.android)
 }
 
 kotlin {
@@ -49,11 +49,11 @@ android {
 }
 
 dependencies {
-    implementation("androidx.test:core-ktx:1.5.0")
-    implementation("androidx.test:runner:1.5.2")
-    implementation("androidx.test.ext:junit:1.1.5")
-    implementation("androidx.test.uiautomator:uiautomator:2.2.0")
-    implementation("androidx.benchmark:benchmark-macro-junit4:1.1.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.runner)
+    implementation(libs.ext.junit)
+    implementation(libs.androidx.uiautomator)
+    implementation(libs.androidx.benchmark.macro.junit4)
 }
 
 androidComponents {
