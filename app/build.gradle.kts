@@ -20,7 +20,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
 }
 
 kotlin {
@@ -94,7 +93,9 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
 
+    implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.mathparser.org.mxparser)
@@ -109,7 +110,6 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.constraintlayout.compose)
     implementation(libs.navigation.compose)
-    implementation(libs.hilt.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)
 
     testImplementation(composeBom)
@@ -128,12 +128,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     ksp(libs.room.compiler)
-    kapt(libs.hilt.compiler)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-}
-
-kapt {
-    correctErrorTypes = true
 }
