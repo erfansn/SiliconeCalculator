@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-package ir.erfansn.siliconecalculator.benchmark
+package ir.erfansn.siliconecalculator
 
 const val TARGET_PACKAGE = "ir.erfansn.siliconecalculator"

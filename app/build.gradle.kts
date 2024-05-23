@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 kotlin {
@@ -56,12 +57,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-        benchmark {
-            initWith(getByName("release"))
-            signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += "release"
-            proguardFiles("benchmark-rules.pro")
-        }
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
@@ -83,7 +78,15 @@ android {
     }
 }
 
+baselineProfile {
+    dexLayoutOptimization = true
+    automaticGenerationDuringBuild = true
+    saveInSrc = false
+}
+
 dependencies {
+    baselineProfile(project(":benchmark"))
+
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(libs.core.ktx)

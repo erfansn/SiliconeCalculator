@@ -17,6 +17,7 @@
 plugins {
     alias(libs.plugins.android.test)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 kotlin {
@@ -28,24 +29,27 @@ android {
     namespace = "${Configs.PACKAGE_NAME}.benchmark"
 
     defaultConfig {
-        minSdk = Configs.MIN_SDK_VERSION.coerceAtLeast(23)
+        minSdk = 28
         targetSdk = Configs.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        // This benchmark buildType is used for benchmarking, and should function like your
-        // release build (for example, with minification on). It's signed with a debug key
-        // for easy local/CI testing.
-        benchmark {
-            signingConfig = getByName("debug").signingConfig
-            isDebuggable = true
-        }
-    }
-
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
+
+    testOptions.managedDevices.localDevices {
+        create("pixel8Api34") {
+            device = "Pixel 8 API 34"
+            apiLevel = 34
+            systemImageSource = "aosp-atd"
+        }
+    }
+}
+
+baselineProfile {
+    managedDevices += "pixel8Api34"
+    useConnectedDevices = false
 }
 
 dependencies {
@@ -54,10 +58,4 @@ dependencies {
     implementation(libs.ext.junit)
     implementation(libs.androidx.uiautomator)
     implementation(libs.androidx.benchmark.macro.junit4)
-}
-
-androidComponents {
-    beforeVariants {
-        it.enable = it.buildType == "benchmark"
-    }
 }

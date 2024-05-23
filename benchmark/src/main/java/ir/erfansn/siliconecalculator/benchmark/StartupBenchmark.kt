@@ -21,8 +21,8 @@ import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.StartupTimingMetric
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
-import androidx.test.filters.SdkSuppress
-import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import ir.erfansn.siliconecalculator.TARGET_PACKAGE
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,21 +31,21 @@ import org.junit.runner.RunWith
  * Run this benchmark from Studio to see startup measurements, and captured system traces
  * for investigating your app's performance from a cold state.
  */
-@RunWith(AndroidJUnit4ClassRunner::class)
+@RunWith(AndroidJUnit4::class)
 class ColdStartupBenchmark : AbstractStartupBenchmark(StartupMode.COLD)
 
 /**
  * Run this benchmark from Studio to see startup measurements, and captured system traces
  * for investigating your app's performance from a warm state.
  */
-@RunWith(AndroidJUnit4ClassRunner::class)
+@RunWith(AndroidJUnit4::class)
 class WarmStartupBenchmark : AbstractStartupBenchmark(StartupMode.WARM)
 
 /**
  * Run this benchmark from Studio to see startup measurements, and captured system traces
  * for investigating your app's performance from a hot state.
  */
-@RunWith(AndroidJUnit4ClassRunner::class)
+@RunWith(AndroidJUnit4::class)
 class HotStartupBenchmark : AbstractStartupBenchmark(StartupMode.HOT)
 
 /**
@@ -53,15 +53,14 @@ class HotStartupBenchmark : AbstractStartupBenchmark(StartupMode.HOT)
  * Enables app startups from various states of baseline profile or [CompilationMode]s.
  */
 abstract class AbstractStartupBenchmark(private val startupMode: StartupMode) {
+
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    @SdkSuppress(minSdkVersion = 24)
     fun startupNoCompilation() = startup(CompilationMode.None())
 
     @Test
-    @SdkSuppress(minSdkVersion = 24)
     fun startupPartialCompilation() = startup(
         CompilationMode.Partial(
             baselineProfileMode = BaselineProfileMode.Disable,
@@ -70,7 +69,6 @@ abstract class AbstractStartupBenchmark(private val startupMode: StartupMode) {
     )
 
     @Test
-    @SdkSuppress(minSdkVersion = 24)
     fun startupPartialWithBaselineProfiles() =
         startup(CompilationMode.Partial(baselineProfileMode = BaselineProfileMode.Require))
 
@@ -83,9 +81,7 @@ abstract class AbstractStartupBenchmark(private val startupMode: StartupMode) {
         compilationMode = compilationMode,
         iterations = 10,
         startupMode = startupMode,
-        setupBlock = {
-            pressHome()
-        }
+        setupBlock = { pressHome() }
     ) {
         startActivityAndWait()
     }
