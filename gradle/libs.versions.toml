@@ -12,10 +12,10 @@ hiltAndroidVersion = "2.47"
 hiltNavigationComposeVersion = "1.0.0"
 junit = "1.1.5"
 junitVersion = "4.13.2"
-kotlinVersion = "1.9.23"
+kotlinVersion = "2.0.0"
 kotlinxCoroutinesTestVersion = "1.7.3"
 kotlinxDatetimeVersion = "0.4.0"
-kspVersion = "1.9.23-1.0.20"
+kspVersion = "2.0.0-1.0.21"
 daggerHiltVersion = "2.47"
 lifecycleRuntimeKtxVersion = "2.6.1"
 lifecycleViewmodelComposeVersion = "2.6.1"
@@ -79,3 +79,4 @@ android-library = { id = "com.android.library", version.ref = "agpVersion" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHiltVersion" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }
