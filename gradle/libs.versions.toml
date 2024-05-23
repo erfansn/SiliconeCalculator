@@ -28,7 +28,7 @@ roomRuntimeVersion = "2.5.2"
 runnerVersion = "1.5.2"
 truthVersion = "1.1.3"
 turbineVersion = "1.0.0"
-composeBomVersion = "2023.06.01"
+composeBomVersion = "2024.05.00"
 uiautomatorVersion = "2.2.0"
 androidxBaselineProfileVersion = "1.3.0-alpha05"
 

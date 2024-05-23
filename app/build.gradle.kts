@@ -84,6 +84,10 @@ baselineProfile {
     saveInSrc = false
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+}
+
 dependencies {
     baselineProfile(project(":benchmark"))
 
