@@ -1,3 +1,8 @@
 # Default ignored files
-/shelf/
-/workspace.xml
+/*
+!/copyright
+# Keep the code styles.
+!/codeStyles
+/codeStyles/*
+!/codeStyles/Project.xml
+!/codeStyles/codeStyleConfig.xml
