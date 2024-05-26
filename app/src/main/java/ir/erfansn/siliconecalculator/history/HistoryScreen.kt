@@ -19,7 +19,7 @@
 package ir.erfansn.siliconecalculator.history
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,6 +52,8 @@ import ir.erfansn.siliconecalculator.ui.component.CorneredFlatButton
 import ir.erfansn.siliconecalculator.ui.component.CorneredFlatIconButton
 import ir.erfansn.siliconecalculator.ui.component.OutlinedCorneredFlatButton
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,11 +68,16 @@ fun HistoryScreen(
         initialValue = ModalBottomSheetValue.Hidden
     )
 
-    BackHandler {
-        if (clearHistoryBottomSheetState.isVisible) {
-            coroutineScope.launch { clearHistoryBottomSheetState.hide() }
-        } else {
-            onBackPress()
+    PredictiveBackHandler {
+        try {
+            it.collect()
+            if (clearHistoryBottomSheetState.isVisible) {
+                coroutineScope.launch { clearHistoryBottomSheetState.hide() }
+            } else {
+                onBackPress()
+            }
+        } catch (e: CancellationException) {
+            // Nothing to do
         }
     }
     ModalBottomSheetLayout(

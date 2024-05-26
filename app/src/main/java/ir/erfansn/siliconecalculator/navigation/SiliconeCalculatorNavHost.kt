@@ -16,6 +16,9 @@
 
 package ir.erfansn.siliconecalculator.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +46,12 @@ fun SiliconeCalculatorNavHost(
     NavHost(
         navController = navController,
         startDestination = CALCULATOR_ROUTE,
+        popEnterTransition = {
+            fadeIn()
+        },
+        popExitTransition = {
+            fadeOut() + slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)
+        },
     ) {
         composable(CALCULATOR_ROUTE) {
             val calculatorViewModel = hiltViewModel<CalculatorViewModel>()
