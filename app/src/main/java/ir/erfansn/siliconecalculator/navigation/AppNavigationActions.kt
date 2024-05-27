@@ -48,7 +48,9 @@ class AppNavigationActions(private val navController: NavController) {
         navController.navigate(
             route = "$CALCULATOR?$EXPRESSION_ARG=${expression.encodeReservedChars}&$RESULT_ARG=${result}"
         ) {
-            launchSingleTop = true
+            popUpTo(CALCULATOR) {
+                inclusive = true
+            }
         }
     }
 
