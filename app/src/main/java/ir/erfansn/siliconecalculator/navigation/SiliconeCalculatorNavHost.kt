@@ -47,20 +47,31 @@ fun SiliconeCalculatorNavHost(
         navController = navController,
         startDestination = CALCULATOR_ROUTE,
         popEnterTransition = {
-            fadeIn()
+            fadeIn(animationSpec = tween(durationMillis = 700))
         },
         popExitTransition = {
-            fadeOut() + slideOutOfContainer(towards = AnimatedContentTransitionScope.SlideDirection.End)
+            fadeOut(
+                animationSpec = tween(durationMillis = 700)
+            ) + slideOutOfContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.End,
+                animationSpec = tween(durationMillis = 700)
+            )
         },
     ) {
-        composable(CALCULATOR_ROUTE) {
+        composable(CALCULATOR_ROUTE) { backStackEntry ->
             val calculatorViewModel = hiltViewModel<CalculatorViewModel>()
             val uiState by calculatorViewModel.uiState.collectAsState()
 
             CalculatorScreen(
                 uiState = uiState,
                 onCalculatorButtonClick = calculatorViewModel::performCalculatorButton,
-                onHistoryNav = navActions::navigateToHistory,
+                // Until fixes this [https://issuetracker.google.com/issues/342965874]
+                // onHistoryNav = dropUnlessResumed(block = navActions::navigateToHistory),
+                onHistoryNav = {
+                    if (backStackEntry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        navActions.navigateToHistory()
+                    }
+                },
                 onThemeToggle = onThemeToggle
             )
         }
@@ -71,8 +82,16 @@ fun SiliconeCalculatorNavHost(
             HistoryScreen(
                 uiState = uiState,
                 onHistoryClear = historyViewModel::onHistoryClear,
-                onBackPress = navActions::onBackPress,
-                onCalculationClick = navActions::navigateToCalculator
+                onBackPress = {
+                    if (backStackEntry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        navActions.onBackPress()
+                    }
+                },
+                onCalculationClick = {
+                    if (backStackEntry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                        navActions.navigateToCalculator(it)
+                    }
+                }
             )
         }
     }

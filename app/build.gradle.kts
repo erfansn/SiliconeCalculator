@@ -95,7 +95,6 @@ dependencies {
 
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.profileinstaller)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
@@ -118,6 +117,7 @@ dependencies {
     implementation(libs.constraintlayout.compose)
     implementation(libs.navigation.compose)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
 
     testImplementation(composeBom)
     testImplementation(libs.junit)

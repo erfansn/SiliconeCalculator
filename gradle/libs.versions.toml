@@ -16,8 +16,7 @@ kotlinxCoroutinesTestVersion = "1.7.3"
 kotlinxDatetimeVersion = "0.4.0"
 kspVersion = "2.0.0-1.0.21"
 daggerHiltVersion = "2.51.1"
-lifecycleRuntimeKtxVersion = "2.6.1"
-lifecycleViewmodelComposeVersion = "2.6.1"
+androidxLifecycleVersion = "2.8.0"
 mathparserOrgMxparserVersion = "5.0.6"
 mockkVersion = "1.13.2"
 mockkAgentJvmVersion = "1.13.2"
@@ -54,7 +53,7 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetimeVersion" }
-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelComposeVersion" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleVersion" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 material = { module = "androidx.compose.material:material" }
 mathparser-org-mxparser = { module = "org.mariuszgromada.math:MathParser.org-mXparser", version.ref = "mathparserOrgMxparserVersion" }
@@ -62,7 +61,6 @@ mockk-agent-jvm = { module = "io.mockk:mockk-agent-jvm", version.ref = "mockkAge
 mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstallerVersion" }
-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectricVersion" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntimeVersion" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntimeVersion" }
@@ -71,6 +69,7 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbineVersion" 
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntimeVersion" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycleVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agpVersion" }
