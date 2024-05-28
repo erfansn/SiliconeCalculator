@@ -9,7 +9,7 @@ coreKtxVersion = "1.13.1"
 appcompatVersion = "1.6.1"
 desugarJdkLibsVersion = "2.0.4"
 hiltNavigationComposeVersion = "1.2.0"
-junit = "1.1.5"
+androidxJunitVersion = "1.1.5"
 junitVersion = "4.13.2"
 kotlinVersion = "2.0.0"
 kotlinxCoroutinesTestVersion = "1.7.3"
@@ -23,7 +23,7 @@ mockkAgentJvmVersion = "1.13.2"
 navigationComposeVersion = "2.7.7"
 profileinstallerVersion = "1.3.1"
 robolectricVersion = "4.10.3"
-roomRuntimeVersion = "2.5.2"
+roomVersion = "2.6.1"
 runnerVersion = "1.5.2"
 truthVersion = "1.1.3"
 turbineVersion = "1.0.0"
@@ -37,7 +37,7 @@ activity-compose = { module = "androidx.activity:activity-compose", version.ref 
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4Version" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runnerVersion" }
-androidx-core-ktx = { module = "androidx.test:core-ktx", version.ref = "coreKtx" }
+androidx-core-ktx = { module = "androidx.test:core-ktx", version.ref = "testCoreKtxVersion" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
@@ -46,7 +46,7 @@ appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompatV
 constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutComposeVersion" }
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugarJdkLibsVersion" }
-ext-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
+ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxJunitVersion" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerHiltVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerHiltVersion" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
@@ -62,13 +62,13 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstallerVersion" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectricVersion" }
-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntimeVersion" }
-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntimeVersion" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
 truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbineVersion" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntimeVersion" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycleVersion" }
 
 [plugins]
@@ -79,4 +79,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVer
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHiltVersion" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinVersion" }
-androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxBaselineProfileVersion"}
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxBaselineProfileVersion" }
+androidx-room = { id = "androidx.room", version.ref = "roomVersion" }

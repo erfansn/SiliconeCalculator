@@ -21,6 +21,7 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -41,10 +42,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
-        }
-
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 
@@ -86,6 +83,10 @@ baselineProfile {
 
 composeCompiler {
     enableStrongSkippingMode = true
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
