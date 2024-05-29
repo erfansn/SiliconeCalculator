@@ -17,8 +17,13 @@
 package ir.erfansn.siliconecalculator.util
 
 import org.mariuszgromada.math.mxparser.Expression
+import org.mariuszgromada.math.mxparser.License
 
 class Evaluator {
+
+    init {
+        License.iConfirmNonCommercialUse("Erfan Sn")
+    }
 
     private val _expression = Expression()
 
@@ -27,7 +32,7 @@ class Evaluator {
            field = value.amendExpression().also(_expression::setExpressionString)
        }
 
-    fun eval() = _expression.calculate().toString()
+    fun eval(): String = _expression.calculate().toBigDecimal().toPlainString()
 
     private fun String.amendExpression(): String {
         return replace(
