@@ -23,9 +23,9 @@ object AllClear : CalculatorButton("AC") {
 
     override val applier: (String) -> String = { "" }
 
-    override fun Calculation.perform(): Calculation {
-        return copy(
-            expression = applier(expression),
+    override fun perform(calculation: Calculation): Calculation {
+        return calculation.copy(
+            expression = applier(calculation.expression),
             result = "0"
         )
     }

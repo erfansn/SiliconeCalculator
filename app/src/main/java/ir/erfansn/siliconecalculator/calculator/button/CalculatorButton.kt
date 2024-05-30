@@ -31,41 +31,41 @@ import ir.erfansn.siliconecalculator.util.Evaluator
 
 abstract class CalculatorButton(val symbol: String) {
     open val applier = { n: String -> "$n $symbol " }
-    abstract fun Calculation.perform(): Calculation
+    abstract fun perform(calculation: Calculation): Calculation
 }
 
 open class FunctionButton(symbol: String) : CalculatorButton(symbol) {
 
     protected val evaluator = Evaluator()
 
-    override fun Calculation.perform(): Calculation {
-        if (result == "0") return this
+    override fun perform(calculation: Calculation): Calculation {
+        if (calculation.result == "0") return calculation
 
-        evaluator.expression = applier(result)
+        evaluator.expression = applier(calculation.result)
 
-        return copy(result = evaluator.eval())
+        return calculation.copy(result = evaluator.eval())
     }
 }
 
 open class OperatorButton(symbol: String) : CalculatorButton(symbol) {
 
-    override fun Calculation.perform(): Calculation {
-        if (expression.isEmpty() && result == "0") return this
+    override fun perform(calculation: Calculation): Calculation {
+        if (calculation.expression.isEmpty() && calculation.result == "0") return calculation
 
         val amendedExpression = when {
-            result == "0" -> expression.substringBeforeLast(lastOperator)
-            expression.endsWith(lastOperator) -> expression.plus(result)
-            else -> result
+            calculation.result == "0" -> calculation.expression.substringBeforeLast(calculation.lastOperator)
+            calculation.expression.endsWith(calculation.lastOperator) -> calculation.expression.plus(calculation.result)
+            else -> calculation.result
         }
 
-        return copy(
+        return calculation.copy(
             expression = applier(amendedExpression),
             result = "0"
         )
     }
 }
 
-val calculatorButtons = listOf(
+val calculatorButtonsInOrder = setOf(
     AllClear,
     NumSign,
     Percent,

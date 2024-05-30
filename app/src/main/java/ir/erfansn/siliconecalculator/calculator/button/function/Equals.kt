@@ -23,16 +23,16 @@ object Equals : FunctionButton("=") {
 
     override val applier: (String) -> String = { it }
 
-    override fun Calculation.perform(): Calculation {
-        if (!isComplete) return this
+    override fun perform(calculation: Calculation): Calculation {
+        if (!calculation.isComplete) return calculation
 
-        val amendedExpression = if (result == "0")
-            expression.substringBeforeLast(lastOperator)
+        val amendedExpression = if (calculation.result == "0")
+            calculation.expression.substringBeforeLast(calculation.lastOperator)
         else
-            expression.plus(result)
+            calculation.expression.plus(calculation.result)
 
         evaluator.expression = applier(amendedExpression)
 
-        return copy(expression = evaluator.expression, result = evaluator.eval())
+        return calculation.copy(expression = evaluator.expression, result = evaluator.eval())
     }
 }

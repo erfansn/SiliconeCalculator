@@ -72,7 +72,7 @@ import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_RO
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.color
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.widthRatio
 import ir.erfansn.siliconecalculator.calculator.button.CalculatorButton
-import ir.erfansn.siliconecalculator.calculator.button.calculatorButtons
+import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrder
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
 import ir.erfansn.siliconecalculator.calculator.button.common.Digit
 import ir.erfansn.siliconecalculator.calculator.button.function.Equals
@@ -232,7 +232,7 @@ private fun KeyLayout(
             val spaceBetweenButtons =
                 calculatorState.calculateButtonSpacing(buttonSizeWithoutSpacing)
 
-            for (button in calculatorButtons) {
+            for (button in calculatorButtonsInOrder) {
                 val hapticFeedback = LocalHapticFeedback.current
                 NeuButton(
                     modifier = Modifier

@@ -28,7 +28,11 @@ import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsArg.EXPRESSION_ARG
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsArg.RESULT_ARG
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,10 +78,8 @@ class CalculatorViewModel @Inject constructor(
 
         viewModelScope.launch(defaultDispatcher) {
             _calculation.update {
-                with(calculatorButton) {
-                    it.perform().also {
-                        if (calculatorButton == Equals) saveCalculationInHistory(it)
-                    }
+                calculatorButton.perform(it).also { result ->
+                    if (calculatorButton == Equals) saveCalculationInHistory(result)
                 }
             }
         }

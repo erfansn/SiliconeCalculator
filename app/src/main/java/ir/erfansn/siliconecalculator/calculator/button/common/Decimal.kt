@@ -23,9 +23,9 @@ object Decimal : CalculatorButton(".") {
 
     override val applier: (String) -> String = { n -> "$n$symbol" }
 
-    override fun Calculation.perform(): Calculation {
-        if (symbol in result) return this
+    override fun perform(calculation: Calculation): Calculation {
+        if (symbol in calculation.result) return calculation
 
-        return copy(result = applier(result))
+        return calculation.copy(result = applier(calculation.result))
     }
 }

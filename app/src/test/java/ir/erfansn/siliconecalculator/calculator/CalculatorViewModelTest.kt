@@ -304,7 +304,7 @@ class CalculatorViewModelTest {
                 viewModel.performCalculatorButton(Add)
                 viewModel.performCalculatorButton(Digit('1'))
                 viewModel.performCalculatorButton(Equals)
-                calculatorButtons.filterNot { it == AllClear }.forEach(viewModel::performCalculatorButton)
+                calculatorButtonsInOrder.filterNot { it == AllClear }.forEach(viewModel::performCalculatorButton)
 
                 var uiState = expectMostRecentItem()
                 assertThat(uiState.calculation.result).doesNotContainMatch(DECIMAL_REGEX)
