@@ -104,7 +104,6 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    implementation(libs.accompanist.systemuicontroller)
     implementation(libs.mathparser.org.mxparser)
     implementation(libs.kotlinx.datetime)
 

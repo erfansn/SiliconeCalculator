@@ -27,6 +27,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,12 +47,6 @@ import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 class SiliconeCalculatorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge(
-            navigationBarStyle = SystemBarStyle.auto(
-                lightScrim = Color.TRANSPARENT,
-                darkScrim = Color.TRANSPARENT,
-            )
-        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -60,7 +55,18 @@ class SiliconeCalculatorActivity : ComponentActivity() {
         setContent {
             val isSystemDark = isSystemInDarkTheme()
             var darkTheme by remember { mutableStateOf(isSystemDark) }
-            val onThemeToggle = { darkTheme = !darkTheme }
+            DisposableEffect(darkTheme) {
+                val transparentStyle = SystemBarStyle.auto(
+                    lightScrim = Color.TRANSPARENT,
+                    darkScrim = Color.TRANSPARENT,
+                    detectDarkMode = { darkTheme }
+                )
+                enableEdgeToEdge(
+                    navigationBarStyle = transparentStyle,
+                    statusBarStyle = transparentStyle
+                )
+                onDispose {  }
+            }
 
             val navController = rememberNavController()
             CircularReveal(
@@ -74,7 +80,9 @@ class SiliconeCalculatorActivity : ComponentActivity() {
                     ) {
                         SiliconeCalculatorNavHost(
                             navController = navController,
-                            onThemeToggle = onThemeToggle
+                            onThemeToggle = {
+                                darkTheme = !darkTheme
+                            }
                         )
                     }
                 }
