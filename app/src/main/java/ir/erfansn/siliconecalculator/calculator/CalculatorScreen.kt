@@ -22,11 +22,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -96,11 +100,12 @@ fun CalculatorScreen(
         constraintSet = constraintSet,
         modifier = Modifier
             .fillMaxSize()
-            .safeContentPadding(),
+            .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Vertical)),
     ) {
         CalculatorTopBar(
             onThemeToggle = onThemeToggle,
             onHistoryNav = onHistoryNav,
+            modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
         )
         CalculatorContent(
             onCalculatorButtonClick = onCalculatorButtonClick,
@@ -114,9 +119,10 @@ fun CalculatorScreen(
 fun CalculatorTopBar(
     onThemeToggle: () -> Unit,
     onHistoryNav: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.layoutId("top_bar"),
+        modifier = modifier.layoutId("top_bar"),
         horizontalArrangement = Arrangement.spacedBy(10.dp,
             alignment = Alignment.Start)
     ) {
@@ -148,7 +154,8 @@ fun CalculatorContent(
         evaluationResult = evaluationResult,
     )
     KeyLayout(
-        onButtonClick = onCalculatorButtonClick
+        onButtonClick = onCalculatorButtonClick,
+        modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
     )
 }
 
@@ -169,6 +176,7 @@ private fun Display(
                     state = rememberScrollState(),
                     reverseScrolling = true
                 )
+                .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
                 .padding(horizontal = 20.dp)
                 .alpha(ContentAlpha.medium)
                 .testTag("calculator:expression"),
@@ -191,6 +199,7 @@ private fun Display(
                             state = rememberScrollState(),
                             reverseScrolling = true
                         )
+                        .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
                         .padding(horizontal = 20.dp)
                         .testTag("calculator:result"),
                     text = evaluationResult.formatNumbers(),
@@ -205,11 +214,12 @@ private fun Display(
 
 @Composable
 private fun KeyLayout(
-    calculatorState: NumberPadState = rememberNumberPadState(),
     onButtonClick: (CalculatorButton) -> Unit,
+    modifier: Modifier = Modifier,
+    calculatorState: NumberPadState = rememberNumberPadState(),
 ) {
     BoxWithConstraints(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 8.dp)
             .aspectRatio(BUTTONS_LAYOUT_COLUMNS_COUNT / BUTTONS_LAYOUT_ROW_COUNT.toFloat())
             .layoutId("key_layout")
