@@ -106,6 +106,7 @@ dependencies {
 
     implementation(libs.mathparser.org.mxparser)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.kotlinx.coroutines.android)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)

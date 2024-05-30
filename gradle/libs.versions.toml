@@ -11,7 +11,7 @@ hiltNavigationComposeVersion = "1.2.0"
 androidxJunitVersion = "1.1.5"
 junitVersion = "4.13.2"
 kotlinVersion = "2.0.0"
-kotlinxCoroutinesTestVersion = "1.7.3"
+kotlinxCoroutinesVersion = "1.9.0-RC"
 kotlinxDatetimeVersion = "0.6.0"
 kspVersion = "2.0.0-1.0.21"
 daggerHiltVersion = "2.51.1"
@@ -48,7 +48,8 @@ ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxJunitVe
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "daggerHiltVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "daggerHiltVersion" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesVersion" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesVersion" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetimeVersion" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycleVersion" }
