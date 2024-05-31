@@ -47,9 +47,6 @@ import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 class SiliconeCalculatorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.isNavigationBarContrastEnforced = false
-        }
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -65,6 +62,9 @@ class SiliconeCalculatorActivity : ComponentActivity() {
                     navigationBarStyle = transparentStyle,
                     statusBarStyle = transparentStyle
                 )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    window.isNavigationBarContrastEnforced = false
+                }
                 onDispose {  }
             }
 
