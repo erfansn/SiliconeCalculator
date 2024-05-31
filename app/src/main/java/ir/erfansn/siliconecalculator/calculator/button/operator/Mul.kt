@@ -18,4 +18,4 @@ package ir.erfansn.siliconecalculator.calculator.button.operator
 
 import ir.erfansn.siliconecalculator.calculator.button.OperatorButton
 
-object Mul : OperatorButton("×")
+data object Mul : OperatorButton("×")

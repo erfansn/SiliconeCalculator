@@ -18,7 +18,7 @@ package ir.erfansn.siliconecalculator.calculator.button.function
 
 import ir.erfansn.siliconecalculator.calculator.button.FunctionButton
 
-object NumSign : FunctionButton("±") {
+data object NumSign : FunctionButton("±") {
 
     override val applier: (String) -> String = { n -> "-$n" }
 }

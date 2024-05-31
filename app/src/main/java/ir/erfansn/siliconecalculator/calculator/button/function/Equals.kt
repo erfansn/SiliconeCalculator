@@ -19,7 +19,7 @@ package ir.erfansn.siliconecalculator.calculator.button.function
 import ir.erfansn.siliconecalculator.calculator.button.FunctionButton
 import ir.erfansn.siliconecalculator.data.model.Calculation
 
-object Equals : FunctionButton("=") {
+data object Equals : FunctionButton("=") {
 
     override val applier: (String) -> String = { it }
 
