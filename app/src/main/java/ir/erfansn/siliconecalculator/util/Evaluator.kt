@@ -32,7 +32,13 @@ class Evaluator {
            field = value.amendExpression().also(_expression::setExpressionString)
        }
 
-    fun eval(): String = _expression.calculate().toBigDecimal().toPlainString()
+    fun eval(): String = _expression.calculate().let {
+        if (it.isFinite()) {
+            it.toBigDecimal().toPlainString()
+        } else {
+            it.toString()
+        }
+    }
 
     private fun String.amendExpression(): String {
         return replace(
