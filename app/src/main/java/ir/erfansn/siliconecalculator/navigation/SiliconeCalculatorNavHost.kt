@@ -21,11 +21,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -69,7 +69,9 @@ fun SiliconeCalculatorNavHost(
             )
         ) { backStackEntry ->
             val calculatorViewModel = hiltViewModel<CalculatorViewModel>()
-            val uiState by calculatorViewModel.uiState.collectAsState()
+            // Until fixes this [https://issuetracker.google.com/issues/342965874]
+            val uiState by calculatorViewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = backStackEntry)
+            val calculatorButtons by calculatorViewModel.calculatorButtons.collectAsStateWithLifecycle(lifecycleOwner = backStackEntry)
 
             CalculatorScreen(
                 uiState = uiState,
@@ -81,12 +83,14 @@ fun SiliconeCalculatorNavHost(
                         navActions.navigateToHistory()
                     }
                 },
-                onThemeToggle = onThemeToggle
+                onThemeToggle = onThemeToggle,
+                calculatorButtons = calculatorButtons
             )
         }
         composable(HISTORY_ROUTE) { backStackEntry ->
             val historyViewModel = hiltViewModel<HistoryViewModel>()
-            val uiState by historyViewModel.uiState.collectAsState()
+            // Until fixes this [https://issuetracker.google.com/issues/342965874]
+            val uiState by historyViewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = backStackEntry)
 
             HistoryScreen(
                 uiState = uiState,
