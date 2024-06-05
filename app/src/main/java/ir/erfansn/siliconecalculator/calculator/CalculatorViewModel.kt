@@ -21,8 +21,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.erfansn.siliconecalculator.calculator.button.CalculatorButton
+import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrderAllClear
+import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrderClear
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.common.Decimal
+import ir.erfansn.siliconecalculator.calculator.button.common.Digit
 import ir.erfansn.siliconecalculator.calculator.button.function.Equals
+import ir.erfansn.siliconecalculator.calculator.button.function.NumSign
+import ir.erfansn.siliconecalculator.calculator.button.function.Percent
 import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.repository.HistoryRepository
 import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsArg.EXPRESSION_ARG
@@ -30,7 +36,10 @@ import ir.erfansn.siliconecalculator.navigation.SiliconeCalculatorDestinationsAr
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -48,6 +57,9 @@ class CalculatorViewModel @Inject constructor(
 
     private var previousExpression = currentCalculation.expression
 
+    private val _calculatorButtons = MutableStateFlow(listOf<CalculatorButton>())
+    val calculatorButtons = _calculatorButtons.asStateFlow()
+
     val uiState = _calculation
         .map(::CalculatorUiState)
         .stateIn(
@@ -61,6 +73,18 @@ class CalculatorViewModel @Inject constructor(
             expression = savedStateHandle[EXPRESSION_ARG],
             result = savedStateHandle[RESULT_ARG]
         )
+
+        _calculation
+            .onEach { calculation ->
+                _calculatorButtons.update {
+                    if (!calculation.isNotEvaluated || calculation.resultIsInvalid) {
+                        calculatorButtonsInOrderAllClear
+                    } else {
+                        calculatorButtonsInOrderClear
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun updateCalculatorDisplay(expression: String?, result: String?) {
@@ -75,6 +99,7 @@ class CalculatorViewModel @Inject constructor(
 
     fun performCalculatorButton(calculatorButton: CalculatorButton) {
         if (currentCalculation.resultIsInvalid && calculatorButton != AllClear) return
+        if (!currentCalculation.isNotEvaluated && (calculatorButton is Digit || calculatorButton in listOf(Decimal, NumSign, Percent))) return
 
         viewModelScope.launch(defaultDispatcher) {
             _calculation.update {
@@ -86,7 +111,7 @@ class CalculatorViewModel @Inject constructor(
     }
 
     private suspend fun saveCalculationInHistory(calculation: Calculation) {
-        if (calculation.isNotEvaluated || calculation.resultIsInvalid) return
+        if (calculation.expression == previousExpression || calculation.isNotEvaluated || calculation.resultIsInvalid) return
 
         historyRepository.saveCalculation(calculation)
 
@@ -94,5 +119,5 @@ class CalculatorViewModel @Inject constructor(
     }
 
     private val Calculation.isNotEvaluated
-        get() = expression.endsWith(lastOperator) || expression.isEmpty() || expression == previousExpression
+        get() = expression.endsWith(lastOperator) || expression.isEmpty()
 }

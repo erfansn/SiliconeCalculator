@@ -72,8 +72,9 @@ import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_RO
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.color
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.widthRatio
 import ir.erfansn.siliconecalculator.calculator.button.CalculatorButton
-import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrder
+import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrderClear
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.common.Clear
 import ir.erfansn.siliconecalculator.calculator.button.common.Digit
 import ir.erfansn.siliconecalculator.calculator.button.function.Equals
 import ir.erfansn.siliconecalculator.calculator.button.function.NumSign
@@ -95,6 +96,7 @@ fun CalculatorScreen(
     onCalculatorButtonClick: (CalculatorButton) -> Unit,
     onHistoryNav: () -> Unit,
     onThemeToggle: () -> Unit,
+    calculatorButtons: List<CalculatorButton>
 ) {
     ConstraintLayout(
         constraintSet = constraintSet,
@@ -110,7 +112,8 @@ fun CalculatorScreen(
         CalculatorContent(
             onCalculatorButtonClick = onCalculatorButtonClick,
             mathExpression = uiState.calculation.expression,
-            evaluationResult = uiState.calculation.result
+            evaluationResult = uiState.calculation.result,
+            calculatorButtons = calculatorButtons,
         )
     }
 }
@@ -145,6 +148,7 @@ fun CalculatorTopBar(
 
 @Composable
 fun CalculatorContent(
+    calculatorButtons: List<CalculatorButton>,
     onCalculatorButtonClick: (CalculatorButton) -> Unit,
     mathExpression: String,
     evaluationResult: String,
@@ -154,6 +158,7 @@ fun CalculatorContent(
         evaluationResult = evaluationResult,
     )
     KeyLayout(
+        calculatorButtons = calculatorButtons,
         onButtonClick = onCalculatorButtonClick,
         modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
     )
@@ -214,6 +219,7 @@ private fun Display(
 
 @Composable
 private fun KeyLayout(
+    calculatorButtons: List<CalculatorButton>,
     onButtonClick: (CalculatorButton) -> Unit,
     modifier: Modifier = Modifier,
     calculatorState: NumberPadState = rememberNumberPadState(),
@@ -232,7 +238,7 @@ private fun KeyLayout(
             val spaceBetweenButtons =
                 calculatorState.calculateButtonSpacing(buttonSizeWithoutSpacing)
 
-            for (button in calculatorButtonsInOrder) {
+            for (button in calculatorButtons) {
                 val hapticFeedback = LocalHapticFeedback.current
                 NeuButton(
                     modifier = Modifier
@@ -245,7 +251,12 @@ private fun KeyLayout(
                     lightColor = button.color,
                     onClick = {
                         onButtonClick(button)
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    },
+                    onLongClick = {
+                        if (button == Clear) {
+                            onButtonClick(AllClear)
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        }
                     }
                 ) {
                     Text(
@@ -325,7 +336,7 @@ object NumberPadState {
         @Composable
         get() = when (this) {
             in listOf(Div, Mul, Sub, Add, Equals) -> MaterialTheme.colors.secondary
-            in listOf(AllClear, NumSign, Percent) -> MaterialTheme.colors.primaryVariant
+            in listOf(Clear, AllClear, NumSign, Percent) -> MaterialTheme.colors.primaryVariant
             else -> MaterialTheme.colors.primary
         }
 }
@@ -348,6 +359,7 @@ fun CalculatorScreenPreview() {
     SiliconeCalculatorTheme {
         Surface(color = MaterialTheme.colors.background) {
             CalculatorScreen(
+                calculatorButtons = calculatorButtonsInOrderClear,
                 uiState = CalculatorUiState(
                     Calculation(
                         expression = "4,900 + 15,910",
