@@ -24,6 +24,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.SavedStateHandle
+import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrderClear
 import ir.erfansn.siliconecalculator.data.repository.FakeHistoryRepository
 import kotlinx.coroutines.Dispatchers
 import org.junit.Before
@@ -66,7 +67,8 @@ class CalculatorScreenTest {
                 uiState = uiState,
                 onCalculatorButtonClick = viewModel::performCalculatorButton,
                 onHistoryNav = { },
-                onThemeToggle = { }
+                onThemeToggle = { },
+                calculatorButtons = calculatorButtonsInOrderClear
             )
         }
     }

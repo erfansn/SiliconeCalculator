@@ -24,8 +24,8 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
-import ir.erfansn.siliconecalculator.calculator.button.calculatorButtons
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.common.Clear
 import ir.erfansn.siliconecalculator.calculator.button.common.Decimal
 import ir.erfansn.siliconecalculator.calculator.button.common.Digit
 import ir.erfansn.siliconecalculator.calculator.button.function.Equals
@@ -241,18 +241,21 @@ class CalculatorViewModelTest {
     }
 
     @Test
-    fun `Evaluates the entered expression only one time even result changed`() = runTest {
+    fun `Doesn't change expression after evaluation`() = runTest {
         viewModel.uiState.test {
             viewModel.performCalculatorButton(Digit('1'))
             viewModel.performCalculatorButton(Add)
             viewModel.performCalculatorButton(Digit('2'))
             viewModel.performCalculatorButton(Equals)
+
             viewModel.performCalculatorButton(Digit('9'))
-            viewModel.performCalculatorButton(Equals)
+            viewModel.performCalculatorButton(Percent)
+            viewModel.performCalculatorButton(Decimal)
+            viewModel.performCalculatorButton(NumSign)
 
             val uiState = expectMostRecentItem()
             assertThat(uiState.calculation.expression).isEqualTo("1 + 2")
-            assertThat(uiState.calculation.result).isEqualTo("3.09")
+            assertThat(uiState.calculation.result).isEqualTo("3.0")
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -304,10 +307,10 @@ class CalculatorViewModelTest {
                 viewModel.performCalculatorButton(Add)
                 viewModel.performCalculatorButton(Digit('1'))
                 viewModel.performCalculatorButton(Equals)
-                calculatorButtonsInOrder.filterNot { it == AllClear }.forEach(viewModel::performCalculatorButton)
+                viewModel.calculatorButtons.value.filterNot { it == AllClear }.forEach(viewModel::performCalculatorButton)
 
                 var uiState = expectMostRecentItem()
-                assertThat(uiState.calculation.result).doesNotContainMatch(DECIMAL_REGEX)
+                assertThat(uiState.calculation.result).doesNotMatch(DECIMAL_REGEX)
 
                 viewModel.performCalculatorButton(AllClear)
 
@@ -324,10 +327,9 @@ class CalculatorViewModelTest {
         viewModel.performCalculatorButton(Digit('1'))
         viewModel.performCalculatorButton(Add)
         viewModel.performCalculatorButton(Digit('2'))
-        viewModel.performCalculatorButton(Equals)
 
-        viewModel.saveCalculationInHistory()
-        viewModel.saveCalculationInHistory()
+        viewModel.performCalculatorButton(Equals)
+        viewModel.performCalculatorButton(Equals)
 
         coVerify(exactly = 1) { historyRepository.saveCalculation(any()) }
         confirmVerified(historyRepository)
@@ -339,9 +341,8 @@ class CalculatorViewModelTest {
         viewModel.performCalculatorButton(Div)
         viewModel.performCalculatorButton(Decimal)
         viewModel.performCalculatorButton(Digit('0'))
-        viewModel.performCalculatorButton(Equals)
 
-        viewModel.saveCalculationInHistory()
+        viewModel.performCalculatorButton(Equals)
 
         coVerify(exactly = 0) { historyRepository.saveCalculation(any()) }
         confirmVerified(historyRepository)
@@ -352,9 +353,38 @@ class CalculatorViewModelTest {
         every { savedStateHandle.get<String>(EXPRESSION_ARG) } returns "1 + 3 - 6"
         every { savedStateHandle.get<String>(RESULT_ARG) } returns "-2.0"
 
-        viewModel.saveCalculationInHistory()
+        viewModel.performCalculatorButton(Equals)
 
         coVerify(exactly = 0) { historyRepository.saveCalculation(any()) }
         confirmVerified(historyRepository)
+    }
+
+    @Test
+    fun `Gets calculator keys with AllClear button when expression evaluated`() = runTest {
+        viewModel.calculatorButtons.test {
+            viewModel.performCalculatorButton(Digit('1'))
+            viewModel.performCalculatorButton(Add)
+            viewModel.performCalculatorButton(Digit('2'))
+            viewModel.performCalculatorButton(Equals)
+
+            val keys = expectMostRecentItem()
+
+            assertThat(keys).contains(AllClear)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Gets calculator keys with 'Clear' button when expression hasn't evaluated`()  = runTest {
+        viewModel.calculatorButtons.test {
+            viewModel.performCalculatorButton(Digit('1'))
+            viewModel.performCalculatorButton(Add)
+            viewModel.performCalculatorButton(Digit('2'))
+
+            val keys = expectMostRecentItem()
+
+            assertThat(keys).contains(Clear)
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

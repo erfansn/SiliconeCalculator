@@ -17,6 +17,7 @@
 package ir.erfansn.siliconecalculator.calculator.button
 
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
+import ir.erfansn.siliconecalculator.calculator.button.common.Clear
 import ir.erfansn.siliconecalculator.calculator.button.common.Decimal
 import ir.erfansn.siliconecalculator.calculator.button.common.Digit
 import ir.erfansn.siliconecalculator.calculator.button.function.Equals
@@ -65,8 +66,8 @@ open class OperatorButton(symbol: String) : CalculatorButton(symbol) {
     }
 }
 
-val calculatorButtonsInOrder = setOf(
-    AllClear,
+val calculatorButtonsInOrderClear = listOf(
+    Clear,
     NumSign,
     Percent,
     Div,
@@ -86,3 +87,8 @@ val calculatorButtonsInOrder = setOf(
     Decimal,
     Equals,
 )
+
+val calculatorButtonsInOrderAllClear = calculatorButtonsInOrderClear.toMutableList()
+    .also {
+        it[0] = AllClear
+    }
