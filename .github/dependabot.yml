@@ -8,4 +8,41 @@ updates:
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    labels: [ "version update" ]
+    open-pull-requests-limit: 10
+    registries: "*"
+    groups:
+      kotlin-related-plugins:
+        patterns:
+          - "org.jetbrains.kotlin.android"
+          - "com.google.devtools.ksp"
+          - "org.jetbrains.kotlin.plugin.compose"
+      agp-related-plugins:
+        patterns:
+          - "com.android.application"
+          - "com.android.test"
+          - "com.android.library"
+      coroutines-related-dependencies:
+        patterns:
+          - "org.jetbrains.kotlinx:kotlinx-coroutines-android"
+          - "org.jetbrains.kotlinx:kotlinx-coroutines-test"
+      dagger-hilt-related-stuffs:
+        patterns:
+          - "com.google.dagger:hilt-android"
+          - "com.google.dagger:hilt-compiler"
+          - "com.google.dagger.hilt.android"
+      lifecycle-related-dependencies:
+        patterns:
+          - "androidx.lifecycle:lifecycle-viewmodel-compose"
+          - "androidx.lifecycle:lifecycle-runtime-compose"
+      mockk-related-dependencies:
+        patterns:
+          - "io.mockk:mockk-agent"
+          - "io.mockk:mockk-android"
+      room-related-stuffs:
+        patterns:
+          - "androidx.room:room-ktx"
+          - "androidx.room:room-runtime"
+          - "androidx.room:room-compiler"
+          - "androidx.room"
