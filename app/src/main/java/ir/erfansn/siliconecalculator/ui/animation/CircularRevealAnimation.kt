@@ -19,7 +19,11 @@ package ir.erfansn.siliconecalculator.ui.animation
 import android.graphics.Path
 import android.view.MotionEvent
 import androidx.annotation.FloatRange
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +35,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -46,37 +56,36 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 import kotlin.math.hypot
 
 @Composable
-fun <T> CircularReveal(
-    targetState: T,
+fun CircularReveal(
+    expanded: Boolean,
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
-    content: @Composable (T) -> Unit,
+    content: @Composable (Boolean) -> Unit,
 ) {
-    val transition = updateTransition(targetState, label = "Circular reveal")
+    val transition = updateTransition(expanded, label = "Circular reveal")
     transition.CircularReveal(modifier, animationSpec, content = content)
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun <T> Transition<T>.CircularReveal(
+private fun Transition<Boolean>.CircularReveal(
     modifier: Modifier = Modifier,
     animationSpec: FiniteAnimationSpec<Float> = tween(),
-    content: @Composable (targetState: T) -> Unit,
+    content: @Composable (targetState: Boolean) -> Unit,
 ) {
     var offset: Offset? by remember { mutableStateOf(null) }
-    val currentlyVisible = remember { mutableStateListOf<T>().apply { add(currentState) } }
+    val currentlyVisible = remember { mutableStateListOf<Boolean>().apply { add(false) } }
     val contentMap = remember {
-        mutableMapOf<T, @Composable () -> Unit>()
+        mutableMapOf<Boolean, @Composable () -> Unit>()
     }
     if (currentState == targetState) {
         // If not animating, just display the current state
         if (currentlyVisible.size != 1 || currentlyVisible[0] != targetState) {
-            // Remove all the intermediate items from the list once the animation is finished.
-            currentlyVisible.removeAll { it != targetState }
             contentMap.clear()
         }
     }
@@ -91,7 +100,7 @@ private fun <T> Transition<T>.CircularReveal(
             currentlyVisible[replacementId] = targetState
         }
         contentMap.clear()
-        currentlyVisible.forEach { stateForContent ->
+        currentlyVisible.fastForEach { stateForContent ->
             contentMap[stateForContent] = {
                 val progress by animateFloat(
                     label = "Progress",
@@ -114,7 +123,7 @@ private fun <T> Transition<T>.CircularReveal(
             started
         }
     ) {
-        currentlyVisible.forEach {
+        currentlyVisible.fastForEach {
             key(it) {
                 contentMap[it]?.invoke()
             }
@@ -122,7 +131,7 @@ private fun <T> Transition<T>.CircularReveal(
     }
 }
 
-private val <T> Transition<T>.started get() =
+private val Transition<Boolean>.started get() =
     currentState != targetState || isRunning
 
 private fun Modifier.circularReveal(
@@ -166,13 +175,13 @@ private class CircularRevealShape(
 @OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
-fun CircularRevealAnimationPreview() {
+private fun CircularRevealAnimationPreview() {
     val isSystemDark = isSystemInDarkTheme()
     var darkTheme by remember { mutableStateOf(isSystemDark) }
     val onThemeToggle = { darkTheme = !darkTheme }
 
     CircularReveal(
-        targetState = darkTheme,
+        expanded = darkTheme,
         animationSpec = tween(1500)
     ) { isDark ->
         SiliconeCalculatorTheme(darkTheme = isDark) {
@@ -186,7 +195,7 @@ fun CircularRevealAnimationPreview() {
                 ) {
                     Icon(
                         modifier = Modifier.size(120.dp),
-                        imageVector = if (!darkTheme) Icons.Default.DarkMode else Icons.Default.LightMode,
+                        imageVector = if (!isDark) Icons.Default.DarkMode else Icons.Default.LightMode,
                         contentDescription = "Toggle",
                     )
                 }

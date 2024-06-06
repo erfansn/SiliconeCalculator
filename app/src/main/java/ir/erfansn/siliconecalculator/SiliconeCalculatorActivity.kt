@@ -70,7 +70,7 @@ class SiliconeCalculatorActivity : ComponentActivity() {
 
             val navController = rememberNavController()
             CircularReveal(
-                targetState = darkTheme,
+                expanded = darkTheme,
                 animationSpec = tween(500)
             ) { isDark ->
                 SiliconeCalculatorTheme(darkTheme = isDark) {
