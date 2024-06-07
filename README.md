@@ -13,8 +13,8 @@ Design by [SINTHAI](https://www.behance.net/gallery/130717085/The-calculator-) w
 ## 📷 Preview
 <p align="center">
   <img src="media/preview0.gif" alt="drawing" width="270" />
-  <img src="media/preview1.jpg" alt="drawing" width="270" />
-  <img src="media/preview2.jpg" alt="drawing" width="270" />
+  <img src="media/preview1.png" alt="drawing" width="270" />
+  <img src="media/preview2.png" alt="drawing" width="270" />
 </p>
 
 ## 🏛️ Architecture
@@ -32,7 +32,6 @@ a **benchmark** test has been written for the app startup states to measure the 
     - Constraint Layout
     - Compose Navigation
     - Material 2
-    - Accompanist system UI controller
 - **Data layer**
     - Room database
     - Dagger Hilt
