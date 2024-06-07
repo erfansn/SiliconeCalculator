@@ -41,7 +41,7 @@ android {
 
     testOptions.managedDevices.localDevices {
         create("pixel8Api34") {
-            device = "Pixel 8 API 34"
+            device = "Pixel 8"
             apiLevel = 34
             systemImageSource = "aosp-atd"
         }
