@@ -30,6 +30,7 @@ android {
 
     defaultConfig {
         minSdk = 28
+        // Used only for Manifest merging purpose
         targetSdk = Configs.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
