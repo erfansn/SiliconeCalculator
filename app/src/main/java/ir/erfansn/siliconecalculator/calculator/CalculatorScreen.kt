@@ -17,6 +17,7 @@
 package ir.erfansn.siliconecalculator.calculator
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -49,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -89,6 +91,7 @@ import ir.erfansn.siliconecalculator.ui.component.NeuButton
 import ir.erfansn.siliconecalculator.ui.layout.Grid
 import ir.erfansn.siliconecalculator.ui.theme.SiliconeCalculatorTheme
 import ir.erfansn.siliconecalculator.util.formatNumbers
+import kotlinx.coroutines.launch
 
 @Composable
 fun CalculatorScreen(
@@ -153,13 +156,21 @@ fun CalculatorContent(
     mathExpression: String,
     evaluationResult: String,
 ) {
+    val scrollState = rememberScrollState()
     Display(
         mathExpression = mathExpression,
         evaluationResult = evaluationResult,
+        resultScrollState = scrollState,
     )
+    val coroutineScope = rememberCoroutineScope()
     KeyLayout(
         calculatorButtons = calculatorButtons,
-        onButtonClick = onCalculatorButtonClick,
+        onButtonClick = {
+            onCalculatorButtonClick(it)
+            coroutineScope.launch {
+                scrollState.animateScrollTo(0)
+            }
+        },
         modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
     )
 }
@@ -168,6 +179,7 @@ fun CalculatorContent(
 private fun Display(
     mathExpression: String,
     evaluationResult: String,
+    resultScrollState: ScrollState,
 ) {
     Column(
         modifier = Modifier
@@ -201,7 +213,7 @@ private fun Display(
                 Text(
                     modifier = Modifier
                         .horizontalScroll(
-                            state = rememberScrollState(),
+                            state = resultScrollState,
                             reverseScrolling = true
                         )
                         .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
