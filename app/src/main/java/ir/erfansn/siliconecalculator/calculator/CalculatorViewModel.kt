@@ -97,9 +97,9 @@ class CalculatorViewModel @Inject constructor(
         previousExpression = expression
     }
 
-    fun performCalculatorButton(calculatorButton: CalculatorButton) {
-        if (currentCalculation.resultIsInvalid && calculatorButton != AllClear) return
-        if (!currentCalculation.isNotEvaluated && (calculatorButton is Digit || calculatorButton in listOf(Decimal, NumSign, Percent))) return
+    fun performCalculatorButton(calculatorButton: CalculatorButton): Boolean {
+        if (currentCalculation.resultIsInvalid && calculatorButton != AllClear) return false
+        if (!currentCalculation.isNotEvaluated && (calculatorButton is Digit || calculatorButton in listOf(Decimal, NumSign, Percent))) return false
 
         viewModelScope.launch(defaultDispatcher) {
             _calculation.update {
@@ -108,6 +108,7 @@ class CalculatorViewModel @Inject constructor(
                 }
             }
         }
+        return true
     }
 
     private suspend fun saveCalculationInHistory(calculation: Calculation) {

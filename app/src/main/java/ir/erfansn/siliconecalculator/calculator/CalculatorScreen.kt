@@ -74,6 +74,7 @@ import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_RO
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.color
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.widthRatio
 import ir.erfansn.siliconecalculator.calculator.button.CalculatorButton
+import ir.erfansn.siliconecalculator.calculator.button.OperatorButton
 import ir.erfansn.siliconecalculator.calculator.button.calculatorButtonsInOrderClear
 import ir.erfansn.siliconecalculator.calculator.button.common.AllClear
 import ir.erfansn.siliconecalculator.calculator.button.common.Clear
@@ -96,7 +97,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalculatorScreen(
     uiState: CalculatorUiState,
-    onCalculatorButtonClick: (CalculatorButton) -> Unit,
+    onCalculatorButtonClick: (CalculatorButton) -> Boolean,
     onHistoryNav: () -> Unit,
     onThemeToggle: () -> Unit,
     calculatorButtons: List<CalculatorButton>
@@ -152,23 +153,33 @@ fun CalculatorTopBar(
 @Composable
 fun CalculatorContent(
     calculatorButtons: List<CalculatorButton>,
-    onCalculatorButtonClick: (CalculatorButton) -> Unit,
+    onCalculatorButtonClick: (CalculatorButton) -> Boolean,
     mathExpression: String,
     evaluationResult: String,
 ) {
-    val scrollState = rememberScrollState()
+    val expressionScrollState = rememberScrollState()
+    val resultScrollState = rememberScrollState()
     Display(
         mathExpression = mathExpression,
         evaluationResult = evaluationResult,
-        resultScrollState = scrollState,
+        resultScrollState = resultScrollState,
+        expressionScrollState = expressionScrollState,
     )
     val coroutineScope = rememberCoroutineScope()
     KeyLayout(
         calculatorButtons = calculatorButtons,
         onButtonClick = {
-            onCalculatorButtonClick(it)
+            if (!onCalculatorButtonClick(it)) return@KeyLayout
             coroutineScope.launch {
-                scrollState.animateScrollTo(0)
+                if (it == NumSign) {
+                    resultScrollState.scrollTo(resultScrollState.maxValue)
+                } else {
+                    resultScrollState.scrollTo(0)
+                }
+
+                if (it is OperatorButton || it == Equals) {
+                    expressionScrollState.scrollTo(0)
+                }
             }
         },
         modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
@@ -180,6 +191,7 @@ private fun Display(
     mathExpression: String,
     evaluationResult: String,
     resultScrollState: ScrollState,
+    expressionScrollState: ScrollState,
 ) {
     Column(
         modifier = Modifier
@@ -190,7 +202,7 @@ private fun Display(
         Text(
             modifier = Modifier
                 .horizontalScroll(
-                    state = rememberScrollState(),
+                    state = expressionScrollState,
                     reverseScrolling = true
                 )
                 .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
@@ -378,7 +390,7 @@ fun CalculatorScreenPreview() {
                         result = "20,810"
                     )
                 ),
-                onCalculatorButtonClick = { },
+                onCalculatorButtonClick = { false },
                 onHistoryNav = { },
                 onThemeToggle = { }
             )
