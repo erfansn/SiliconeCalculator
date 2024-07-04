@@ -3,7 +3,7 @@ activityComposeVersion = "1.9.0"
 agpVersion = "8.5.0"
 benchmarkMacroJunit4Version = "1.2.4"
 constraintlayoutComposeVersion = "1.0.1"
-testCoreKtxVersion = "1.6.1"
+androidxTestVersion = "1.6.1"
 coreKtxVersion = "1.13.1"
 appcompatVersion = "1.7.0"
 desugarJdkLibsVersion = "2.0.4"
@@ -22,7 +22,6 @@ navigationComposeVersion = "2.7.7"
 profileinstallerVersion = "1.3.1"
 robolectricVersion = "4.12.2"
 roomVersion = "2.6.1"
-runnerVersion = "1.6.1"
 truthVersion = "1.4.3"
 turbineVersion = "1.1.0"
 composeBomVersion = "2024.06.00"
@@ -33,8 +32,8 @@ androidxBaselineProfileVersion = "1.3.0-beta01"
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4Version" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
-androidx-runner = { module = "androidx.test:runner", version.ref = "runnerVersion" }
-androidx-core-ktx = { module = "androidx.test:core-ktx", version.ref = "testCoreKtxVersion" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "androidxTestVersion" }
+androidx-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidxTestVersion" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
