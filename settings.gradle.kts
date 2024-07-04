@@ -28,6 +28,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Silicone Calculator"
+rootProject.name = "SiliconeCalculator"
 include(":app")
 include(":benchmark")
