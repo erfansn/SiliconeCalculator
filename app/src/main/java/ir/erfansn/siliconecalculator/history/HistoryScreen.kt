@@ -36,7 +36,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
-import androidx.compose.foundation.layout.safeContentPadding
+
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -128,7 +129,7 @@ fun HistoryScreen(
             constraintSet = constraintSet,
             modifier = Modifier
                 .fillMaxSize()
-                .safeContentPadding(),
+                .safeDrawingPadding(),
         ) {
             HistoryTopBar(
                 onBackPress = onBackPress,

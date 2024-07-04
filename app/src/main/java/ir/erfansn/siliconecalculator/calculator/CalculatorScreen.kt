@@ -24,13 +24,11 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContent
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -107,12 +105,11 @@ fun CalculatorScreen(
         constraintSet = constraintSet,
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Vertical)),
+            .windowInsetsPadding(WindowInsets.safeDrawing),
     ) {
         CalculatorTopBar(
             onThemeToggle = onThemeToggle,
             onHistoryNav = dropUnlessResumed(block = onHistoryNav),
-            modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
         )
         CalculatorContent(
             onCalculatorButtonClick = onCalculatorButtonClick,
@@ -183,7 +180,6 @@ fun CalculatorContent(
                 }
             }
         },
-        modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
     )
 }
 
@@ -206,7 +202,6 @@ private fun Display(
                     state = expressionScrollState,
                     reverseScrolling = true
                 )
-                .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
                 .padding(horizontal = 20.dp)
                 .alpha(ContentAlpha.medium)
                 .testTag("calculator:expression"),
@@ -229,7 +224,6 @@ private fun Display(
                             state = resultScrollState,
                             reverseScrolling = true
                         )
-                        .windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
                         .padding(horizontal = 20.dp)
                         .testTag("calculator:result"),
                     text = evaluationResult.formatNumbers(),
