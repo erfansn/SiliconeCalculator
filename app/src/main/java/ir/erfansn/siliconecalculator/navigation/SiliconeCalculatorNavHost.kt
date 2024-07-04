@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -67,44 +66,28 @@ fun SiliconeCalculatorNavHost(
                 navArgument(SiliconeCalculatorDestinationsArg.EXPRESSION_ARG) { defaultValue = "" },
                 navArgument(SiliconeCalculatorDestinationsArg.RESULT_ARG) { defaultValue = "0" },
             )
-        ) { backStackEntry ->
+        ) {
             val calculatorViewModel = hiltViewModel<CalculatorViewModel>()
-            // Until fixes this [https://issuetracker.google.com/issues/342965874]
-            val uiState by calculatorViewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = backStackEntry)
-            val calculatorButtons by calculatorViewModel.calculatorButtons.collectAsStateWithLifecycle(lifecycleOwner = backStackEntry)
+            val uiState by calculatorViewModel.uiState.collectAsStateWithLifecycle()
+            val calculatorButtons by calculatorViewModel.calculatorButtons.collectAsStateWithLifecycle()
 
             CalculatorScreen(
                 uiState = uiState,
                 onCalculatorButtonClick = calculatorViewModel::performCalculatorButton,
-                // Until fixes this [https://issuetracker.google.com/issues/342965874]
-                // onHistoryNav = dropUnlessResumed(block = navActions::navigateToHistory),
-                onHistoryNav = {
-                    if (backStackEntry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                        navActions.navigateToHistory()
-                    }
-                },
+                onHistoryNav = { navActions.navigateToHistory() },
                 onThemeToggle = onThemeToggle,
                 calculatorButtons = calculatorButtons
             )
         }
         composable(HISTORY_ROUTE) { backStackEntry ->
             val historyViewModel = hiltViewModel<HistoryViewModel>()
-            // Until fixes this [https://issuetracker.google.com/issues/342965874]
-            val uiState by historyViewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = backStackEntry)
+            val uiState by historyViewModel.uiState.collectAsStateWithLifecycle()
 
             HistoryScreen(
                 uiState = uiState,
                 onHistoryClear = historyViewModel::onHistoryClear,
-                onBackPress = {
-                    if (backStackEntry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                        navActions.onBackPress()
-                    }
-                },
-                onCalculationClick = {
-                    if (backStackEntry.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-                        navActions.navigateToCalculator(it)
-                    }
-                }
+                onBackPress = { navActions.onBackPress() },
+                onCalculationClick = { navActions.navigateToCalculator(it) }
             )
         }
     }

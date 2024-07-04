@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.model.History
 import ir.erfansn.siliconecalculator.data.model.previewHistoryItems
@@ -73,7 +74,7 @@ fun CalculationItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = { onCalculationClick(calculation) })
+            .clickable(onClick = dropUnlessResumed { onCalculationClick(calculation) })
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.End
     ) {

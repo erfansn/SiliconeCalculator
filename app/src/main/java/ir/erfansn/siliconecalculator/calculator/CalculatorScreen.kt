@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.dropUnlessResumed
 import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_COLUMNS_COUNT
 import ir.erfansn.siliconecalculator.calculator.NumberPadState.BUTTONS_LAYOUT_ROW_COUNT
@@ -110,7 +111,7 @@ fun CalculatorScreen(
     ) {
         CalculatorTopBar(
             onThemeToggle = onThemeToggle,
-            onHistoryNav = onHistoryNav,
+            onHistoryNav = dropUnlessResumed(block = onHistoryNav),
             modifier = Modifier.windowInsetsPadding(WindowInsets.safeContent.only(WindowInsetsSides.Horizontal))
         )
         CalculatorContent(

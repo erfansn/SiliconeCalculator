@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.dropUnlessResumed
 import ir.erfansn.siliconecalculator.R
 import ir.erfansn.siliconecalculator.data.model.Calculation
 import ir.erfansn.siliconecalculator.data.model.History
@@ -114,7 +115,7 @@ fun HistoryScreen(
                 onCancelClick = {
                     coroutineScope.launch { clearHistoryBottomSheetState.hide() }
                 },
-                onClearClick = {
+                onClearClick = dropUnlessResumed {
                     coroutineScope.launch {
                         onHistoryClear()
                         onBackPress()
@@ -243,7 +244,8 @@ fun HistoryItemsList(
     }
 
     Box(
-        modifier = Modifier.layoutId("history_list")
+        modifier = Modifier
+            .layoutId("history_list")
             .background(color = MaterialTheme.colors.background),
     ) {
         if (historyItemsByDate.isEmpty()) {
