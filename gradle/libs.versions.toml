@@ -1,5 +1,5 @@
 [versions]
-activityComposeVersion = "1.9.0"
+activityComposeVersion = "1.9.1"
 agpVersion = "8.5.0"
 benchmarkMacroJunit4Version = "1.2.4"
 constraintlayoutComposeVersion = "1.0.1"
