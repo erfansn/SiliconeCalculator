@@ -36,7 +36,7 @@ android {
         applicationId = Configs.PACKAGE_NAME
         minSdk = Configs.MIN_SDK_VERSION
         targetSdk = Configs.TARGET_SDK_VERSION
-        versionCode = 5
+        versionCode = 6
         versionName = "2.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
