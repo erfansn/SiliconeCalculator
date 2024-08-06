@@ -31,9 +31,6 @@ jobs:
         with:
           cmdline-tools-version: 11076708
 
-      - name: Update Android packages to latest
-        run: sdkmanager --update
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
