@@ -1,7 +1,7 @@
 [versions]
 activityComposeVersion = "1.9.1"
 agpVersion = "8.5.1"
-benchmarkMacroJunit4Version = "1.2.4"
+benchmarkMacroJunit4Version = "1.3.0"
 constraintlayoutComposeVersion = "1.0.1"
 androidxTestVersion = "1.6.1"
 coreKtxVersion = "1.13.1"
