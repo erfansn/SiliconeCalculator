@@ -22,8 +22,8 @@ import kotlinx.datetime.LocalDate
 class DateConverter {
 
     @TypeConverter
-    fun Int.toLocalDate() = LocalDate.fromEpochDays(this)
+    fun toLocalDate(epochDays: Long): LocalDate = LocalDate.fromEpochDays(epochDays)
 
     @TypeConverter
-    fun LocalDate.toEpochDay() = toEpochDays()
+    fun toEpochDay(localDate: LocalDate): Long = localDate.toEpochDays()
 }

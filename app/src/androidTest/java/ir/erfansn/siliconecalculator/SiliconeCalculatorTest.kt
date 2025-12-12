@@ -70,7 +70,7 @@ class SiliconeCalculatorTest {
                 .performClick()
 
             onNodeWithTag("calculator:expression")
-                .assertTextEquals("12 + 34")
+                .assertTextEquals("12 + 34", includeEditableText = false)
             onNodeWithTag("calculator:result")
                 .assertTextEquals("46.0")
         }

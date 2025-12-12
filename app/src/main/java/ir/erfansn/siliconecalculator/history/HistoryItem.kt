@@ -45,25 +45,27 @@ fun HistoryItem(
     onCalculationClick: (Calculation) -> Unit,
     date: String,
 ) {
-    for (calculation in calculations) {
-        key(calculation.hashCode()) {
-            CalculationItem(
-                calculation = calculation,
-                onCalculationClick = onCalculationClick
-            )
+    Column {
+        for (calculation in calculations) {
+            key(calculation.hashCode()) {
+                CalculationItem(
+                    calculation = calculation,
+                    onCalculationClick = onCalculationClick
+                )
+            }
         }
-    }
 
-    Text(
-        modifier = Modifier.padding(
-            vertical = 12.dp,
-            horizontal = 28.dp
-        ),
-        text = date,
-        style = MaterialTheme.typography.subtitle1.copy(
-            fontWeight = FontWeight.Medium,
+        Text(
+            modifier = Modifier.padding(
+                vertical = 12.dp,
+                horizontal = 28.dp
+            ),
+            text = date,
+            style = MaterialTheme.typography.subtitle1.copy(
+                fontWeight = FontWeight.Medium,
+            )
         )
-    )
+    }
 }
 
 @Composable

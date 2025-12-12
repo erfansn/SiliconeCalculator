@@ -214,7 +214,6 @@ private fun Surface(
                 )
                 .combinedClickable(
                     interactionSource = interactionSource,
-                    indication = rememberRipple(),
                     enabled = enabled,
                     onClick = onClick,
                     onLongClick = onLongClick

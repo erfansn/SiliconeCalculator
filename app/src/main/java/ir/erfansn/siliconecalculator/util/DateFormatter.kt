@@ -16,11 +16,17 @@
 
 package ir.erfansn.siliconecalculator.util
 
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.todayIn
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 fun LocalDate.format(pattern: String = "MMM d"): String =
     when (daysUntil(Clock.System.todayIn(TimeZone.currentSystemDefault()))) {
         0 -> "Today"

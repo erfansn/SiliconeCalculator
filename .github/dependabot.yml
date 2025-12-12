@@ -16,5 +16,4 @@ updates:
       kotlin-related-plugins:
         patterns:
           - "org.jetbrains.kotlin.android"
-          - "com.google.devtools.ksp"
           - "org.jetbrains.kotlin.plugin.compose"

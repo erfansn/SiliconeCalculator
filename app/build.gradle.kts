@@ -24,10 +24,6 @@ plugins {
     alias(libs.plugins.androidx.room)
 }
 
-kotlin {
-    jvmToolchain(Configs.JVM_TOOLCHAIN_VERSION)
-}
-
 android {
     compileSdk = Configs.COMPILE_SDK_VERSION
     namespace = Configs.PACKAGE_NAME
@@ -84,14 +80,14 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(Configs.JVM_TOOLCHAIN_VERSION)
+}
+
 baselineProfile {
     dexLayoutOptimization = true
     automaticGenerationDuringBuild = true
     saveInSrc = false
-}
-
-composeCompiler {
-    enableStrongSkippingMode = true
 }
 
 room {
