@@ -1,0 +1,1 @@
+<p><i>Silicon Calculator</i> is a simple calculator with attractive graphics. It's a cloned version of the <a href='https://apps.apple.com/us/app/calculator/id1069511488' target='_blank' rel='nofollow noopener'>Apple calculator</a>, but with more attractive graphics, history for calculations, and dark and light theme support.</p>
